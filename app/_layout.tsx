@@ -8,14 +8,14 @@ import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 import "../global.css";
 
-import { useColorScheme } from "react-native";
+import { useColorScheme } from "nativewind";
 
 export const unstable_settings = {
   anchor: "(tabs)",
 };
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+  const { colorScheme } = useColorScheme();
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
@@ -24,6 +24,8 @@ export default function RootLayout() {
         <Stack.Screen name="sign-up" />
         <Stack.Screen name="otp" />
         <Stack.Screen name="dashboard" />
+        <Stack.Screen name="profile" />
+        <Stack.Screen name="cartype" />
         <Stack.Screen name="(tabs)" />
       </Stack>
       <StatusBar style="auto" />

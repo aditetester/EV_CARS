@@ -27,7 +27,7 @@ export default function OTPScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white dark:bg-black">
       <View className="flex-1 px-8 justify-center">
         {/* Illustration */}
         <View className="items-center mb-10">
@@ -38,11 +38,11 @@ export default function OTPScreen() {
           />
         </View>
 
-        <Text className="text-3xl font-bold text-center mb-4">
+        <Text className="text-3xl font-bold text-center mb-4 text-black dark:text-white">
           Enter 4-digit{"\n"}Verification code
         </Text>
 
-        <Text className="text-center text-gray-400 mb-10">
+        <Text className="text-center text-gray-400 dark:text-gray-500 mb-10">
           Code send to +91 82****89 and to your registered email. This code will
           expired in 01:30
         </Text>
@@ -54,7 +54,7 @@ export default function OTPScreen() {
               ref={(ref) => {
                 inputs.current[index] = ref;
               }}
-              className="w-16 h-20 bg-gray-100 rounded-xl text-center text-3xl font-bold"
+              className="w-16 h-20 bg-gray-100 dark:bg-gray-800 rounded-xl text-center text-3xl font-bold text-black dark:text-white"
               maxLength={1}
               keyboardType="number-pad"
               value={digit}

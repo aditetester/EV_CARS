@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { useColorScheme } from "nativewind";
 import React from "react";
 import {
   Dimensions,
@@ -18,10 +19,11 @@ const { width } = Dimensions.get("window");
 
 export default function DashboardScreen() {
   const router = useRouter();
+  const { colorScheme } = useColorScheme();
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <StatusBar style="dark" />
+    <SafeAreaView className="flex-1 bg-white dark:bg-black">
+      <StatusBar style="auto" />
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header Section - New Launch */}
         <View className="relative h-[150px] w-full">
@@ -34,10 +36,14 @@ export default function DashboardScreen() {
 
           {/* Floating Profile Button */}
           <TouchableOpacity
-            onPress={() => router.push("/sign-in")}
-            className="absolute top-1/2 right-5 -translate-y-1/2 w-12 h-12 bg-white rounded-full items-center justify-center shadow-md"
+            onPress={() => router.push("/profile")}
+            className="absolute top-1/2 right-5 -translate-y-1/2 w-12 h-12 bg-white dark:bg-black rounded-full items-center justify-center shadow-md"
           >
-            <Ionicons name="person-circle-outline" size={32} color="black" />
+            <Ionicons
+              name="person-circle-outline"
+              size={32}
+              color={colorScheme === "dark" ? "white" : "black"}
+            />
           </TouchableOpacity>
 
           {/* Center Content */}
@@ -62,7 +68,7 @@ export default function DashboardScreen() {
 
         {/* Explore Section */}
         <View className="px-6 mt-4">
-          <Text className="text-lg font-bold tracking-widest uppercase mb-4 text-black">
+          <Text className="text-lg font-bold tracking-widest uppercase mb-4 text-black dark:text-white">
             Explore
           </Text>
           <View className="flex-row justify-between">
@@ -70,28 +76,32 @@ export default function DashboardScreen() {
               title="Cars"
               icon={require("../assets/images/dashboard/cars-icon.png")}
               color="#FBD96D"
+              onPress={() => router.push("/cartype")}
             />
             <ExploreItem
               title="Charging Stations"
               icon={require("../assets/images/dashboard/charging-icon.png")}
               color="#00C49A"
+              onPress={() => console.log("Charging Stations")}
             />
             <ExploreItem
               title="Accessories"
               icon={require("../assets/images/dashboard/accessories-icon.png")}
               color="#00C49A"
+              onPress={() => console.log("Accessories")}
             />
             <ExploreItem
               title="Compare Cars"
               icon={require("../assets/images/dashboard/compare-icon.png")}
               color="#00C49A"
+              onPress={() => console.log("Compare Cars")}
             />
           </View>
         </View>
 
         {/* Map Section */}
         <View className="px-6 mt-4">
-          <View className="h-48 rounded-3xl overflow-hidden relative">
+          <View className="h-44 rounded-3xl overflow-hidden relative  border-2 border-gray-200 dark:border-white">
             <MapView
               style={{ width: "100%", height: "100%" }}
               initialRegion={{
@@ -128,17 +138,17 @@ export default function DashboardScreen() {
 
         {/* Explore EV Club Section */}
         <View className="px-6 mt-4">
-          <Text className="text-lg font-bold tracking-widest uppercase mb-4">
+          <Text className="text-lg font-bold tracking-widest uppercase mb-4 text-black dark:text-white">
             Explore EV Club
           </Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View className="flex-row gap-4">
               {/* Column 1 */}
-              <View className="w-[150px] h-[180px] rounded-2xl overflow-hidden">
+              <View className="w-[150px] h-[180px] rounded-2xl overflow-hidden border border-gray-200 dark:border-white">
                 <Image
                   source={require("../assets/images/dashboard/EV-CLUB-1.png")}
                   style={{ width: "100%", height: "100%" }}
-                  contentFit="contain"
+                  contentFit="cover"
                 />
                 <View className="absolute top-2 left-2 bg-white px-2 py-0.5 rounded-md">
                   <Text className="text-[10px] font-bold text-[#FBD96D]">
@@ -149,14 +159,14 @@ export default function DashboardScreen() {
 
               {/* Column 2 */}
               <View className="w-[150px] flex-col gap-4">
-                <View className="h-[82px] rounded-2xl overflow-hidden bg-black">
+                <View className="h-[82px] rounded-2xl overflow-hidden bg-black border border-gray-200 dark:border-white">
                   <Image
                     source={require("../assets/images/dashboard/EV-CLUB-2.png")}
                     style={{ width: "100%", height: "100%" }}
                     contentFit="cover"
                   />
                 </View>
-                <View className="h-[82px] rounded-2xl overflow-hidden bg-black">
+                <View className="h-[82px] rounded-2xl overflow-hidden bg-black border border-gray-200 dark:border-white">
                   <Image
                     source={require("../assets/images/dashboard/EV-CLUB-3.png")}
                     style={{ width: "100%", height: "100%" }}
@@ -166,7 +176,7 @@ export default function DashboardScreen() {
               </View>
 
               {/* Column 3 (Repeated) */}
-              <View className="w-[150px] h-[180px] rounded-2xl overflow-hidden">
+              <View className="w-[150px] h-[180px] rounded-2xl overflow-hidden border border-gray-200 dark:border-white">
                 <Image
                   source={require("../assets/images/dashboard/EV-CLUB-1.png")}
                   style={{ width: "100%", height: "100%" }}
@@ -181,7 +191,7 @@ export default function DashboardScreen() {
         <View className="px-6 mt-4 items-center">
           <View className="flex-row items-center w-full mb-4">
             <View className="h-[1px] bg-gray-300 flex-1" />
-            <Text className="mx-4 text-lg font-bold text-black uppercase">
+            <Text className="mx-4 text-lg font-bold text-black dark:text-white uppercase">
               March Offers
             </Text>
             <View className="h-[1px] bg-gray-300 flex-1" />
