@@ -10,10 +10,6 @@ import "../global.css";
 
 import { useColorScheme } from "nativewind";
 
-export const unstable_settings = {
-  anchor: "(tabs)",
-};
-
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
 
@@ -26,7 +22,6 @@ export default function RootLayout() {
         <Stack.Screen name="dashboard" />
         <Stack.Screen name="profile" />
         <Stack.Screen name="cartype" />
-        <Stack.Screen name="(tabs)" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/theme";
 import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
@@ -25,6 +26,7 @@ interface MenuSection {
 
 export default function ProfileScreen() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
   const router = useRouter();
 
   // Data for the top action grid
@@ -45,7 +47,7 @@ export default function ProfileScreen() {
             <Ionicons
               name="person"
               size={20}
-              color={colorScheme === "dark" ? "#fff" : "#000"}
+              color={isDark ? Colors.dark.text : Colors.light.text}
             />
           ),
           label: "Profile",
@@ -55,7 +57,7 @@ export default function ProfileScreen() {
             <Ionicons
               name="book"
               size={20}
-              color={colorScheme === "dark" ? "#fff" : "#000"}
+              color={isDark ? Colors.dark.text : Colors.light.text}
             />
           ),
           label: "Address Book",
@@ -70,7 +72,7 @@ export default function ProfileScreen() {
             <MaterialIcons
               name="translate"
               size={20}
-              color={colorScheme === "dark" ? "#fff" : "#000"}
+              color={isDark ? Colors.dark.text : Colors.light.text}
             />
           ),
           label: "Language Selection",
@@ -80,7 +82,7 @@ export default function ProfileScreen() {
             <Ionicons
               name="notifications-outline"
               size={20}
-              color={colorScheme === "dark" ? "#fff" : "#000"}
+              color={isDark ? Colors.dark.text : Colors.light.text}
             />
           ),
           label: "Notification Preferences",
@@ -90,7 +92,7 @@ export default function ProfileScreen() {
             <MaterialIcons
               name="info-outline"
               size={20}
-              color={colorScheme === "dark" ? "#fff" : "#000"}
+              color={isDark ? Colors.dark.text : Colors.light.text}
             />
           ),
           label: "About Us",
@@ -100,7 +102,7 @@ export default function ProfileScreen() {
             <FontAwesome5
               name="share"
               size={18}
-              color={colorScheme === "dark" ? "#fff" : "#000"}
+              color={isDark ? Colors.dark.text : Colors.light.text}
             />
           ),
           label: "Referral",
@@ -110,7 +112,7 @@ export default function ProfileScreen() {
             <Ionicons
               name="power"
               size={20}
-              color={colorScheme === "dark" ? "#fff" : "#000"}
+              color={isDark ? Colors.dark.text : Colors.light.text}
             />
           ),
           label: "Log out",
@@ -123,7 +125,12 @@ export default function ProfileScreen() {
   return (
     <ScrollView className="flex-1 bg-white dark:bg-black">
       {/* Header with Curve */}
-      <View className="relative bg-[#00C29F] h-40 rounded-b-[30px] pt-12">
+      <View
+        style={{
+          backgroundColor: isDark ? Colors.dark.emerald : Colors.light.emerald,
+        }}
+        className="relative h-40 rounded-b-[30px] pt-12"
+      >
         <View className="w-full px-4 flex-row items-center justify-between">
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color="white" />
@@ -146,15 +153,30 @@ export default function ProfileScreen() {
       <View className="mt-20 px-6 pb-6">
         {/* Greeting */}
         <Text className="text-center text-lg font-medium text-black dark:text-white mb-4">
-          Hey! <Text className="text-[#00C29F] font-bold">Nishanth.</Text> Good
-          Morning
+          Hey!{" "}
+          <Text
+            style={{
+              color: isDark ? Colors.dark.emerald : Colors.light.emerald,
+            }}
+            className="font-bold"
+          >
+            Nishanth.
+          </Text>{" "}
+          Good Morning
         </Text>
 
         {/* Action Grid */}
         <View className="flex-row justify-between mb-6 px-10">
           {actionGridItems.map((item, index) => (
             <TouchableOpacity key={index} className="items-center w-[22%]">
-              <View className="w-14 h-14 bg-[#00C29F] rounded-[12px] items-center justify-center shadow-md mb-2">
+              <View
+                style={{
+                  backgroundColor: isDark
+                    ? Colors.dark.emerald
+                    : Colors.light.emerald,
+                }}
+                className="w-14 h-14 rounded-[12px] items-center justify-center shadow-md mb-2"
+              >
                 <FontAwesome5 name={item.icon} size={24} color="white" />
               </View>
               <Text className="text-xs text-black dark:text-white font-medium">
@@ -190,7 +212,13 @@ export default function ProfileScreen() {
           <Ionicons
             name="sunny-outline"
             size={24}
-            color={colorScheme === "dark" ? "gray" : "#00C29F"}
+            color={
+              isDark
+                ? Colors.dark.muted
+                : isDark
+                  ? Colors.dark.emerald
+                  : Colors.light.emerald
+            }
           />
           <Switch
             trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -202,7 +230,13 @@ export default function ProfileScreen() {
           <Ionicons
             name="moon"
             size={24}
-            color={colorScheme === "dark" ? "white" : "gray"}
+            color={
+              isDark
+                ? isDark
+                  ? Colors.dark.text
+                  : Colors.light.text
+                : Colors.light.muted
+            }
           />
         </View>
 

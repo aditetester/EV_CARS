@@ -1,10 +1,15 @@
+import ActionButton from "@/components/ActionButton";
+import { Colors } from "@/constants/theme";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import { useColorScheme } from "nativewind";
 import React, { useRef, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function OTPScreen() {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
   const router = useRouter();
   const [otp, setOtp] = useState(["", "", "", ""]);
   const inputs = useRef<(TextInput | null)[]>([]);
@@ -66,19 +71,20 @@ export default function OTPScreen() {
         </View>
 
         <TouchableOpacity className="mb-8">
-          <Text className="text-[#00c49a] text-center text-lg font-bold">
+          <Text
+            style={{
+              color: isDark ? Colors.dark.emerald : Colors.light.emerald,
+            }}
+            className="text-center text-lg font-bold"
+          >
             Resend OTP
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          className="bg-[#00c49a] rounded-3xl py-4"
+        <ActionButton
+          title="Verify"
           onPress={() => router.push("/dashboard")}
-        >
-          <Text className="text-white text-center text-xl font-bold uppercase">
-            Verify
-          </Text>
-        </TouchableOpacity>
+        />
       </View>
     </SafeAreaView>
   );

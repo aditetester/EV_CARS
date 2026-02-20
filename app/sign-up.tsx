@@ -1,21 +1,24 @@
+import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
-import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React, { useState } from "react";
 import {
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import ActionButton from "@/components/ActionButton";
+import SocialAuthButtons from "@/components/SocialAuthButtons";
 import { useColorScheme } from "nativewind";
 
 export default function SignUpScreen() {
   const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
   const router = useRouter();
   const [accepted, setAccepted] = useState(false);
 
@@ -43,7 +46,9 @@ export default function SignUpScreen() {
               <TextInput
                 placeholder="Name"
                 className="flex-1 text-lg text-black dark:text-white"
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor={
+                  isDark ? Colors.dark.muted : Colors.light.muted
+                }
               />
             </View>
 
@@ -59,7 +64,9 @@ export default function SignUpScreen() {
                 placeholder="Mobile Number"
                 className="flex-1 text-lg text-black dark:text-white"
                 keyboardType="phone-pad"
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor={
+                  isDark ? Colors.dark.muted : Colors.light.muted
+                }
               />
             </View>
 
@@ -75,22 +82,25 @@ export default function SignUpScreen() {
                 placeholder="Email"
                 className="flex-1 text-lg text-black dark:text-white"
                 keyboardType="email-address"
-                placeholderTextColor="#9ca3af"
+                placeholderTextColor={
+                  isDark ? Colors.dark.muted : Colors.light.muted
+                }
               />
             </View>
           </View>
 
-          <TouchableOpacity
-            className="bg-[#00c49a] rounded-3xl py-4 mb-4"
+          <ActionButton
+            title="REGISTER NOW"
             onPress={() => router.push("/otp")}
-          >
-            <Text className="text-white text-center text-lg font-bold">
-              REGISTER NOW
-            </Text>
-          </TouchableOpacity>
+          />
 
-          <TouchableOpacity className="mb-8">
-            <Text className="text-[#00c49a] text-center text-lg font-medium">
+          <TouchableOpacity className="mb-8 mt-8">
+            <Text
+              style={{
+                color: isDark ? Colors.dark.emerald : Colors.light.emerald,
+              }}
+              className="text-center text-lg font-medium"
+            >
               Skip for Now {">>"}
             </Text>
           </TouchableOpacity>
@@ -98,7 +108,21 @@ export default function SignUpScreen() {
           <View className="flex-row items-center mb-8 pr-4">
             <TouchableOpacity
               onPress={() => setAccepted(!accepted)}
-              className={`w-6 h-6 rounded border ${accepted ? "bg-[#00c49a] border-[#00c49a]" : "border-gray-300 dark:border-gray-500"} items-center justify-center mr-3`}
+              style={{
+                backgroundColor: accepted
+                  ? isDark
+                    ? Colors.dark.emerald
+                    : Colors.light.emerald
+                  : undefined,
+                borderColor: accepted
+                  ? isDark
+                    ? Colors.dark.emerald
+                    : Colors.light.emerald
+                  : isDark
+                    ? "#4B5563"
+                    : "#D1D5DB", // approximate gray-500/gray-300
+              }}
+              className="w-6 h-6 rounded border items-center justify-center mr-3"
             >
               {accepted && <Text className="text-white text-xs">✓</Text>}
             </TouchableOpacity>
@@ -115,35 +139,15 @@ export default function SignUpScreen() {
             <View className="flex-1 h-[1px] bg-gray-300 dark:bg-gray-700" />
           </View>
 
-          <View
-            className="flex-row justify-center space-x-6 mb-10"
-            style={{ gap: 24 }}
-          >
-            <TouchableOpacity className="bg-black dark:bg-gray-800 p-3 rounded-xl w-24 items-center">
-              <Image
-                source={require("../assets/images/sign-in/google-icon.png")}
-                style={{ width: 32, height: 32 }}
-                contentFit="contain"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity className="bg-black dark:bg-gray-800 p-3 rounded-xl w-24 items-center">
-              <Image
-                source={require("../assets/images/sign-in/apple-icon.png")}
-                style={{ width: 32, height: 32 }}
-                contentFit="contain"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity className="bg-black dark:bg-gray-800 p-3 rounded-xl w-24 items-center">
-              <Image
-                source={require("../assets/images/sign-in/facebook-icon.png")}
-                style={{ width: 32, height: 32 }}
-                contentFit="contain"
-              />
-            </TouchableOpacity>
-          </View>
+          <SocialAuthButtons />
 
           <View className="flex-row items-center justify-center">
-            <Text className="text-center text-[#00c49a] text-lg">
+            <Text
+              style={{
+                color: isDark ? Colors.dark.emerald : Colors.light.emerald,
+              }}
+              className="text-center text-lg"
+            >
               Already registered?{" "}
             </Text>
             <TouchableOpacity onPress={() => router.push("/sign-in")}>

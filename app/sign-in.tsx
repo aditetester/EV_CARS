@@ -1,10 +1,16 @@
+import ActionButton from "@/components/ActionButton";
+import SocialAuthButtons from "@/components/SocialAuthButtons";
+import { Colors } from "@/constants/theme";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import { useColorScheme } from "nativewind";
 import React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SignInScreen() {
+  const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
   const router = useRouter();
 
   return (
@@ -27,20 +33,15 @@ export default function SignInScreen() {
           <TextInput
             placeholder="Email / Mobile Number"
             className="bg-gray-100 dark:bg-gray-800 rounded-xl px-4 py-4 text-lg text-black dark:text-white"
-            placeholderTextColor="#9ca3af"
+            placeholderTextColor={
+              isDark ? Colors.dark.muted : Colors.light.muted
+            }
           />
         </View>
 
-        <TouchableOpacity
-          className="bg-[#00c49a] rounded-3xl py-4 mb-8"
-          onPress={() => router.push("/otp")}
-        >
-          <Text className="text-white text-center text-xl font-bold">
-            SIGN IN NOW
-          </Text>
-        </TouchableOpacity>
+        <ActionButton title="SIGN IN NOW" onPress={() => router.push("/otp")} />
 
-        <View className="flex-row items-center mb-8">
+        <View className="flex-row items-center mt-8 mb-8">
           <View className="flex-1 h-[1px] bg-gray-300 dark:bg-gray-700" />
           <Text className="mx-4 text-gray-500 dark:text-gray-400">
             Or continue with
@@ -48,35 +49,15 @@ export default function SignInScreen() {
           <View className="flex-1 h-[1px] bg-gray-300 dark:bg-gray-700" />
         </View>
 
-        <View
-          className="flex-row justify-center space-x-6 mb-10"
-          style={{ gap: 24 }}
-        >
-          <TouchableOpacity className="bg-black dark:bg-gray-800 p-3 rounded-xl w-24 items-center">
-            <Image
-              source={require("../assets/images/sign-in/google-icon.png")}
-              style={{ width: 32, height: 32 }}
-              contentFit="contain"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity className="bg-black dark:bg-gray-800 p-3 rounded-xl w-24 items-center">
-            <Image
-              source={require("../assets/images/sign-in/apple-icon.png")}
-              style={{ width: 32, height: 32 }}
-              contentFit="contain"
-            />
-          </TouchableOpacity>
-          <TouchableOpacity className="bg-black dark:bg-gray-800 p-3 rounded-xl w-24 items-center">
-            <Image
-              source={require("../assets/images/sign-in/facebook-icon.png")}
-              style={{ width: 32, height: 32 }}
-              contentFit="contain"
-            />
-          </TouchableOpacity>
-        </View>
+        <SocialAuthButtons />
 
         <View className="flex-row items-center justify-center">
-          <Text className="text-center text-[#00c49a] text-lg">
+          <Text
+            style={{
+              color: isDark ? Colors.dark.emerald : Colors.light.emerald,
+            }}
+            className="text-center text-lg"
+          >
             Not registered yet?{" "}
           </Text>
           <TouchableOpacity onPress={() => router.push("/sign-up")}>

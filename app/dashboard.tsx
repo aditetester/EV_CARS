@@ -1,25 +1,21 @@
-import { Ionicons } from "@expo/vector-icons";
+import ProfileButton from "@/components/ProfileButton";
+import { Colors } from "@/constants/theme";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import React from "react";
-import {
-  Dimensions,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, ScrollView, Text, View } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ExploreItem from "../components/dashboard/ExploreItem";
+import ExploreItem from "../components/ExploreItem";
 
 const { width } = Dimensions.get("window");
 
 export default function DashboardScreen() {
-  const router = useRouter();
   const { colorScheme } = useColorScheme();
+  const isDark = colorScheme === "dark";
+  const router = useRouter();
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-black">
@@ -35,16 +31,9 @@ export default function DashboardScreen() {
           />
 
           {/* Floating Profile Button */}
-          <TouchableOpacity
-            onPress={() => router.push("/profile")}
-            className="absolute top-1/2 right-5 -translate-y-1/2 w-12 h-12 bg-white dark:bg-black rounded-full items-center justify-center shadow-md"
-          >
-            <Ionicons
-              name="person-circle-outline"
-              size={32}
-              color={colorScheme === "dark" ? "white" : "black"}
-            />
-          </TouchableOpacity>
+          <View className="absolute top-1/2 right-5 -translate-y-1/2">
+            <ProfileButton />
+          </View>
 
           {/* Center Content */}
           <View className="absolute top-[55px] left-0 right-0 items-center">
@@ -75,25 +64,25 @@ export default function DashboardScreen() {
             <ExploreItem
               title="Cars"
               icon={require("../assets/images/dashboard/cars-icon.png")}
-              color="#FBD96D"
+              color={isDark ? Colors.dark.yellow : Colors.light.yellow}
               onPress={() => router.push("/cartype")}
             />
             <ExploreItem
               title="Charging Stations"
               icon={require("../assets/images/dashboard/charging-icon.png")}
-              color="#00C49A"
+              color={isDark ? Colors.dark.emerald : Colors.light.emerald}
               onPress={() => console.log("Charging Stations")}
             />
             <ExploreItem
               title="Accessories"
               icon={require("../assets/images/dashboard/accessories-icon.png")}
-              color="#00C49A"
+              color={isDark ? Colors.dark.emerald : Colors.light.emerald}
               onPress={() => console.log("Accessories")}
             />
             <ExploreItem
               title="Compare Cars"
               icon={require("../assets/images/dashboard/compare-icon.png")}
-              color="#00C49A"
+              color={isDark ? Colors.dark.emerald : Colors.light.emerald}
               onPress={() => console.log("Compare Cars")}
             />
           </View>
@@ -118,7 +107,7 @@ export default function DashboardScreen() {
                     latitude: 21.7645 + i * 0.02,
                     longitude: 72.1519 + i * 0.02,
                   }}
-                  pinColor="#00C49A"
+                  pinColor={isDark ? Colors.dark.emerald : Colors.light.emerald}
                   title={`Charging Station ${i}`}
                   description="Bhavnagar, Gujarat"
                 />
@@ -126,7 +115,12 @@ export default function DashboardScreen() {
             </MapView>
 
             <View className="absolute top-0 left-0 right-0 bg-black/40 p-2 justify-center items-center">
-              <Text className="text-[#FFDB63] font-bold text-md">
+              <Text
+                style={{
+                  color: isDark ? Colors.dark.yellow : Colors.light.yellow,
+                }}
+                className="font-bold text-md"
+              >
                 There are 10 Charging Stations nearby
               </Text>
               <Text className="text-white text-sm">
@@ -151,7 +145,12 @@ export default function DashboardScreen() {
                   contentFit="cover"
                 />
                 <View className="absolute top-2 left-2 bg-white px-2 py-0.5 rounded-md">
-                  <Text className="text-[10px] font-bold text-[#FBD96D]">
+                  <Text
+                    style={{
+                      color: isDark ? Colors.dark.yellow : Colors.light.yellow,
+                    }}
+                    className="text-[10px] font-bold"
+                  >
                     NEW
                   </Text>
                 </View>
@@ -197,8 +196,20 @@ export default function DashboardScreen() {
             <View className="h-[1px] bg-gray-300 flex-1" />
           </View>
 
-          <View className="w-full h-32 items-center justify-center mb-4 bg-[#fffefe] border border-gray-400 shadow-lg">
-            <View className="items-center bg-[#686868] px-4 py-2  w-[70%] h-32">
+          <View
+            style={{
+              backgroundColor: isDark
+                ? Colors.dark.surface
+                : Colors.light.surface,
+            }}
+            className="w-full h-32 items-center justify-center mb-4 border border-gray-400 shadow-lg"
+          >
+            <View
+              style={{
+                backgroundColor: isDark ? Colors.dark.muted : "#686868",
+              }}
+              className="items-center px-4 py-2 w-[70%] h-32"
+            >
               <Text className="text-white/60 text-[10px] tracking-[4px] uppercase mb-1">
                 Timmerman Industries
               </Text>
