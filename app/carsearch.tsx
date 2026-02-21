@@ -5,6 +5,7 @@ import FilterChip from "@/components/FilterChip";
 import ProfileButton from "@/components/ProfileButton";
 import SearchBar from "@/components/SearchBar";
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   FlatList,
@@ -159,19 +160,36 @@ export default function CarSearchScreen() {
         <View className="flex-row justify-center gap-10 items-center mt-4 px-6">
           <BrandItem
             source={require("../assets/images/car-type/mg.png")}
-            onPress={() => console.log("MG")}
+            onPress={() =>
+              router.push({ pathname: "/brandsearch", params: { brand: "MG" } })
+            }
           />
           <BrandItem
             source={require("../assets/images/car-type/kia.png")}
-            onPress={() => console.log("KIA")}
+            onPress={() =>
+              router.push({
+                pathname: "/brandsearch",
+                params: { brand: "KIA" },
+              })
+            }
           />
           <BrandItem
             source={require("../assets/images/car-type/mahindra.png")}
-            onPress={() => console.log("Mahindra")}
+            onPress={() =>
+              router.push({
+                pathname: "/brandsearch",
+                params: { brand: "Mahindra" },
+              })
+            }
           />
           <BrandItem
             source={require("../assets/images/car-type/tata.png")}
-            onPress={() => console.log("Tata")}
+            onPress={() =>
+              router.push({
+                pathname: "/brandsearch",
+                params: { brand: "Tata" },
+              })
+            }
           />
         </View>
       </ScrollView>

@@ -66,22 +66,39 @@ export default function CarTypeScreen() {
         <View className="flex-row justify-center gap-10 items-center mt-4 px-6">
           <BrandItem
             source={require("../assets/images/car-type/mg.png")}
-            onPress={() => console.log("MG")}
+            onPress={() =>
+              router.push({ pathname: "/brandsearch", params: { brand: "MG" } })
+            }
           />
 
           <BrandItem
             source={require("../assets/images/car-type/kia.png")}
-            onPress={() => console.log("KIA")}
+            onPress={() =>
+              router.push({
+                pathname: "/brandsearch",
+                params: { brand: "KIA" },
+              })
+            }
           />
 
           <BrandItem
             source={require("../assets/images/car-type/mahindra.png")}
-            onPress={() => console.log("Mahindra")}
+            onPress={() =>
+              router.push({
+                pathname: "/brandsearch",
+                params: { brand: "Mahindra" },
+              })
+            }
           />
 
           <BrandItem
             source={require("../assets/images/car-type/tata.png")}
-            onPress={() => console.log("Tata")}
+            onPress={() =>
+              router.push({
+                pathname: "/brandsearch",
+                params: { brand: "Tata" },
+              })
+            }
           />
         </View>
 
