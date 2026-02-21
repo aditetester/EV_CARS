@@ -3,22 +3,26 @@ import BrandItem from "@/components/BrandItem";
 import ExploreItem from "@/components/ExploreItem";
 import ProfileButton from "@/components/ProfileButton";
 import SearchBar from "@/components/SearchBar";
-import { useTheme } from "@/hooks/useTheme";
 import { Image } from "expo-image";
-import { useColorScheme } from "nativewind";
+import { useRouter } from "expo-router";
+// import { useColorScheme } from "nativewind";
+import { useTheme } from "@/hooks/useTheme";
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
 
 export default function CarTypeScreen() {
-  const { colorScheme } = useColorScheme();
-  const isDark = colorScheme === "dark";
   const theme = useTheme();
+  const router = useRouter();
   return (
     <View className="flex-1 bg-white dark:bg-black">
-      <ScrollView showsVerticalScrollIndicator={false} className="px-5">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="flex-1 px-5"
+        contentContainerStyle={{ paddingBottom: 140 }}
+      >
         {/* Search Bar */}
         <View className="flex-row items-center justify-between px-2 py-2 mt-14 gap-2">
-          <SearchBar />
+          <SearchBar onPress={() => router.push("/carsearch")} />
           <ProfileButton />
         </View>
 
@@ -37,19 +41,19 @@ export default function CarTypeScreen() {
           <ExploreItem
             title="Hatchback"
             icon={require("../assets/images/car-type/car.png")}
-            color={theme.success}
+            color={theme.emerald}
             onPress={() => console.log("Hatchback")}
           />
           <ExploreItem
             title="SUV"
             icon={require("../assets/images/car-type/car.png")}
-            color={theme.success}
+            color={theme.emerald}
             onPress={() => console.log("SUV")}
           />
           <ExploreItem
             title="MUV"
             icon={require("../assets/images/car-type/car.png")}
-            color={theme.success}
+            color={theme.emerald}
             onPress={() => console.log("MUV")}
           />
         </View>
@@ -82,7 +86,7 @@ export default function CarTypeScreen() {
         </View>
 
         {/* Banner Ad */}
-        <View className="mt-6 rounded-2xl overflow-hidden border-2 dark:border-white/50 w-full relative">
+        <View className="mt-6 rounded-2xl overflow-hidden border-2 border-transparent dark:border-white/50 w-full relative">
           <Image
             source={require("../assets/images/car-type/Ad.gif")}
             style={{ width: "100%", height: 230 }}

@@ -25,7 +25,7 @@ function ExploreItem({
           tintColor="black"
         />
       </View>
-      <Text className="text-center text-md font-semibold text-black dark:text-white">
+      <Text className="text-center text-sm font-semibold text-black dark:text-white">
         {title}
       </Text>
     </TouchableOpacity>

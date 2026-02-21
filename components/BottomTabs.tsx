@@ -52,7 +52,7 @@ const BottomTabs: React.FC<BottomTabsProps> = ({ tabs = defaultTabs }) => {
             L0 130
             Z
           `}
-          fill="none"
+          fill={isDark ? "black" : "white"}
           stroke={isDark ? "white" : "black"}
           strokeWidth={1}
         />
