@@ -90,7 +90,7 @@ export default function DashboardScreen() {
 
         {/* Map Section */}
         <View className="px-6 mt-4">
-          <View className="h-44 rounded-3xl overflow-hidden relative  border-2 border-gray-200 dark:border-white">
+          <View className="h-44 rounded-3xl overflow-hidden relative  border-2 border-gray-200 dark:border-gray-500">
             <MapView
               style={{ width: "100%", height: "100%" }}
               initialRegion={{
@@ -138,7 +138,7 @@ export default function DashboardScreen() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             <View className="flex-row gap-4">
               {/* Column 1 */}
-              <View className="w-[150px] h-[180px] rounded-2xl overflow-hidden border border-gray-200 dark:border-white">
+              <View className="w-[150px] h-[180px] rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-500">
                 <Image
                   source={require("../assets/images/dashboard/EV-CLUB-1.png")}
                   style={{ width: "100%", height: "100%" }}
@@ -158,14 +158,14 @@ export default function DashboardScreen() {
 
               {/* Column 2 */}
               <View className="w-[150px] flex-col gap-4">
-                <View className="h-[82px] rounded-2xl overflow-hidden bg-black border border-gray-200 dark:border-white">
+                <View className="h-[82px] rounded-2xl overflow-hidden bg-black border border-gray-200 dark:border-gray-500">
                   <Image
                     source={require("../assets/images/dashboard/EV-CLUB-2.png")}
                     style={{ width: "100%", height: "100%" }}
                     contentFit="cover"
                   />
                 </View>
-                <View className="h-[82px] rounded-2xl overflow-hidden bg-black border border-gray-200 dark:border-white">
+                <View className="h-[82px] rounded-2xl overflow-hidden bg-black border border-gray-200 dark:border-gray-500">
                   <Image
                     source={require("../assets/images/dashboard/EV-CLUB-3.png")}
                     style={{ width: "100%", height: "100%" }}
@@ -175,7 +175,7 @@ export default function DashboardScreen() {
               </View>
 
               {/* Column 3 (Repeated) */}
-              <View className="w-[150px] h-[180px] rounded-2xl overflow-hidden border border-gray-200 dark:border-white">
+              <View className="w-[150px] h-[180px] rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-500">
                 <Image
                   source={require("../assets/images/dashboard/EV-CLUB-1.png")}
                   style={{ width: "100%", height: "100%" }}
@@ -202,14 +202,9 @@ export default function DashboardScreen() {
                 ? Colors.dark.surface
                 : Colors.light.surface,
             }}
-            className="w-full h-32 items-center justify-center mb-4 border border-gray-400 shadow-lg"
+            className="w-full h-32 items-center justify-center mb-4 border border-gray-500 shadow-lg"
           >
-            <View
-              style={{
-                backgroundColor: isDark ? Colors.dark.muted : "#686868",
-              }}
-              className="items-center px-4 py-2 w-[70%] h-32"
-            >
+            <View className="items-center px-4 py-2 w-[70%] h-32 bg-gray-500">
               <Text className="text-white/60 text-[10px] tracking-[4px] uppercase mb-1">
                 Timmerman Industries
               </Text>

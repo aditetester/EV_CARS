@@ -53,8 +53,8 @@ const BottomTabs: React.FC<BottomTabsProps> = ({ tabs = defaultTabs }) => {
             Z
           `}
           fill={isDark ? "black" : "white"}
-          stroke={isDark ? "white" : "black"}
-          strokeWidth={1}
+          stroke={isDark ? "gray" : "black"}
+          strokeWidth={1.5}
         />
       </Svg>
 

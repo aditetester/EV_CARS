@@ -86,7 +86,7 @@ export default function CarTypeScreen() {
         </View>
 
         {/* Banner Ad */}
-        <View className="mt-6 rounded-2xl overflow-hidden border-2 border-transparent dark:border-white/50 w-full relative">
+        <View className="mt-6 rounded-2xl overflow-hidden border-2 border-gray-500 w-full relative">
           <Image
             source={require("../assets/images/car-type/Ad.gif")}
             style={{ width: "100%", height: 230 }}
