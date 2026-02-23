@@ -300,7 +300,10 @@ export default function CarDetailScreen() {
       {/* Footer Buttons */}
       <View className="relative">
         <View className="flex-row bg-white dark:bg-black p-2 rounded-md justify-between">
-          <TouchableOpacity className="flex-1 bg-[#A1131E] py-4 items-center rounded-md mr-2 mb-10">
+          <TouchableOpacity
+            onPress={() => router.push("/select-distributor")}
+            className="flex-1 bg-[#A1131E] py-4 items-center rounded-md mr-2 mb-10"
+          >
             <Text className="text-white font-bold text-xs uppercase">
               Book Test Drive
             </Text>

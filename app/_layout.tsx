@@ -24,6 +24,7 @@ export default function RootLayout() {
         <Stack.Screen name="cartype" />
         <Stack.Screen name="brandsearch" />
         <Stack.Screen name="cardetail" />
+        <Stack.Screen name="select-distributor" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
