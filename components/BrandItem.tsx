@@ -7,6 +7,8 @@ interface BrandItemProps {
   onPress?: () => void;
   size?: number;
   containerStyle?: ViewStyle;
+  tintColor?: string;
+  backgroundColor?: string;
 }
 
 const BrandItem: React.FC<BrandItemProps> = ({
@@ -14,12 +16,14 @@ const BrandItem: React.FC<BrandItemProps> = ({
   onPress,
   size = 60,
   containerStyle,
+  tintColor,
+  backgroundColor = "transparent",
 }) => {
   return (
     <TouchableOpacity onPress={onPress} style={containerStyle}>
       <Image
         source={source}
-        style={{ width: size, height: size }}
+        style={{ width: size, height: size, tintColor, backgroundColor }}
         contentFit="contain"
       />
     </TouchableOpacity>

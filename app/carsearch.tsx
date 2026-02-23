@@ -175,6 +175,8 @@ export default function CarSearchScreen() {
           />
           <BrandItem
             source={require("../assets/images/car-type/mahindra.png")}
+            // tintColor="white"
+            // backgroundColor="transparent"
             onPress={() =>
               router.push({
                 pathname: "/brandsearch",

@@ -45,20 +45,31 @@ export default function BrandSearchScreen() {
   const brandLogo = BRAND_LOGOS[brandLower];
 
   const renderCarItem = ({ item }: { item: Car }) => (
-    <View className="mb-8 items-center">
+    <TouchableOpacity
+      onPress={() =>
+        router.push({
+          pathname: "/brandvariants",
+          params: {
+            brand: brand,
+            carName: item.name,
+          },
+        })
+      }
+      className="mb-8 items-center"
+    >
       <View className="w-full flex-row justify-start px-8 mb-2">
         <View>
           <Text className="text-xl font-bold text-black dark:text-white uppercase -mb-4">
             {item.name}
           </Text>
-          <TouchableOpacity className="flex-row items-center">
+          <View className="flex-row items-center">
             <View className="-mb-12 flex-row items-center">
               <Text className="text-xs text-gray-500 uppercase tracking-widest mr-1">
                 Varients
               </Text>
               <Ionicons name="arrow-forward" size={12} color="gray" />
             </View>
-          </TouchableOpacity>
+          </View>
         </View>
       </View>
 
@@ -75,7 +86,7 @@ export default function BrandSearchScreen() {
           />
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
