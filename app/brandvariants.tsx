@@ -119,22 +119,32 @@ export default function BrandVariantsScreen() {
           justifyContent: "center",
         }}
       >
-        <Animated.View
-          style={{
-            transform: [{ scale }],
-            opacity,
-            width: "100%",
-            alignItems: "center",
-          }}
+        <TouchableOpacity
+          onPress={() =>
+            router.push({
+              pathname: "/cardetail",
+              params: { brand, carName, id: item.id },
+            })
+          }
+          activeOpacity={0.9}
         >
-          <View className="relative w-full h-80 justify-center items-center">
-            <Image
-              source={item.image}
-              style={{ width: width * 2, height: 300 }}
-              resizeMode="contain"
-            />
-          </View>
-        </Animated.View>
+          <Animated.View
+            style={{
+              transform: [{ scale }],
+              opacity,
+              width: "100%",
+              alignItems: "center",
+            }}
+          >
+            <View className="relative w-full h-80 justify-center items-center">
+              <Image
+                source={item.image}
+                style={{ width: width * 2, height: 300 }}
+                resizeMode="contain"
+              />
+            </View>
+          </Animated.View>
+        </TouchableOpacity>
       </View>
     );
   };

@@ -145,7 +145,18 @@ export default function CarSearchScreen() {
                 rating={item.rating}
                 isNew={item.isNew}
                 hasDiscount={item.hasDiscount}
-                onPress={() => console.log(`Pressed ${item.name}`)}
+                onPress={() =>
+                  router.push({
+                    pathname: "/cardetail",
+                    params: {
+                      id: item.id,
+                      brand: item.name.split(" ")[0],
+                      carName: item.name.split(" ").slice(1).join(" "),
+                      price: item.price,
+                      rating: item.rating.toString(),
+                    },
+                  })
+                }
                 onFavoritePress={() => console.log(`Favorite ${item.name}`)}
               />
             )}

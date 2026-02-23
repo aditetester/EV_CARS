@@ -23,6 +23,7 @@ export default function RootLayout() {
         <Stack.Screen name="profile" />
         <Stack.Screen name="cartype" />
         <Stack.Screen name="brandsearch" />
+        <Stack.Screen name="cardetail" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
