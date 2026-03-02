@@ -18,7 +18,7 @@ export default function CarTypeScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="flex-1 px-5"
-        contentContainerStyle={{ paddingBottom: 140 }}
+        contentContainerStyle={{ paddingBottom: 164 }}
       >
         {/* Search Bar */}
         <View className="flex-row items-center justify-between px-2 py-2 mt-14 gap-2">

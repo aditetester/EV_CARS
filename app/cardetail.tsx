@@ -1,15 +1,15 @@
 import { Ionicons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
 import {
-    Dimensions,
-    Image,
-    ScrollView,
-    StatusBar,
-    Text,
-    TouchableOpacity,
-    View,
+  Dimensions,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 const { width } = Dimensions.get("window");
@@ -81,7 +81,7 @@ export default function CarDetailScreen() {
 
   return (
     <View className="flex-1 bg-white dark:bg-black">
-      <StatusBar barStyle="default" />
+      <StatusBar style="auto" />
 
       <ScrollView
         className="flex-1"

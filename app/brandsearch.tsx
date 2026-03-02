@@ -140,7 +140,7 @@ export default function BrandSearchScreen() {
           data={CARS}
           keyExtractor={(item) => item.id}
           renderItem={renderCarItem}
-          contentContainerStyle={{ paddingBottom: 120, paddingTop: 6 }}
+          contentContainerStyle={{ paddingBottom: 164, paddingTop: 6 }}
           showsVerticalScrollIndicator={false}
         />
       </View>

@@ -79,7 +79,7 @@ export default function CarSearchScreen() {
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="px-5"
-        contentContainerStyle={{ paddingBottom: 140 }}
+        contentContainerStyle={{ paddingBottom: 164 }}
         keyboardShouldPersistTaps="handled"
       >
         {/* Search Bar + Profile */}

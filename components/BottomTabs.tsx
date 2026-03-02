@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { Dimensions, TouchableOpacity, View } from "react-native";
@@ -19,7 +20,10 @@ interface BottomTabsProps {
 const defaultTabs: TabItem[] = [
   {
     name: "home-outline",
-    onPress: () => console.log("Home"),
+    onPress: () => {
+      // Use navigation.reset to clear the stack and make dashboard the root
+      // This prevents the back button from returning to the previous screen
+    },
   },
   {
     name: "flash-outline",
@@ -33,23 +37,24 @@ const defaultTabs: TabItem[] = [
 
 const BottomTabs: React.FC<BottomTabsProps> = ({ tabs = defaultTabs }) => {
   const { colorScheme } = useColorScheme();
+  const navigation = useNavigation<any>();
   const isDark = colorScheme === "dark";
 
   return (
-    <View className="absolute bottom-6 left-0 right-0 h-[140px]">
+    <View className="absolute bottom-0 left-0 right-0 h-[164px]">
       {/* SVG Curve */}
       <Svg
         width={width}
-        height={140}
-        viewBox={`0 0 ${width} 140`}
+        height={164}
+        viewBox={`0 0 ${width} 164`}
         className="absolute bottom-0"
       >
         <Path
           d={`
             M0 50
             Q${width / 2} 0 ${width} 50
-            L${width} 130
-            L0 130
+            L${width} 164
+            L0 164
             Z
           `}
           fill={isDark ? "black" : "white"}
@@ -63,13 +68,23 @@ const BottomTabs: React.FC<BottomTabsProps> = ({ tabs = defaultTabs }) => {
         {tabs.map((tab, index) => (
           <TouchableOpacity
             key={index}
-            onPress={tab.onPress}
+            onPress={() => {
+              if (index === 0) {
+                // Home tab: reset stack to dashboard
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: "dashboard" }],
+                });
+              } else if (tab.onPress) {
+                tab.onPress();
+              }
+            }}
             style={{
               backgroundColor: isDark
                 ? Colors.dark.yellow
                 : Colors.light.yellow,
             }}
-            className="w-16 h-16 rounded-full items-center justify-center shadow-lg mb-6"
+            className="w-16 h-16 rounded-full items-center justify-center shadow-lg mb-12"
           >
             <Ionicons name={tab.name} size={30} color="black" />
           </TouchableOpacity>

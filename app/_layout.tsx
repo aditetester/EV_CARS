@@ -1,7 +1,7 @@
 import {
-    DarkTheme,
-    DefaultTheme,
-    ThemeProvider,
+  DarkTheme,
+  DefaultTheme,
+  ThemeProvider,
 } from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -25,6 +25,7 @@ export default function RootLayout() {
         <Stack.Screen name="brandsearch" />
         <Stack.Screen name="cardetail" />
         <Stack.Screen name="select-distributor" />
+        <Stack.Screen name="dealer-details" />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>
