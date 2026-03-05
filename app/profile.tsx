@@ -86,6 +86,7 @@ export default function ProfileScreen() {
             />
           ),
           label: "Notification Preferences",
+          action: () => router.push("/notification-preferences"),
         },
         {
           icon: (
