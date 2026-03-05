@@ -1,20 +1,11 @@
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import "react-native-reanimated";
 import "../global.css";
 
-import { useColorScheme } from "nativewind";
-
 export default function RootLayout() {
-  const { colorScheme } = useColorScheme();
-
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+    <>
       <Stack screenOptions={{ headerShown: false }} initialRouteName="sign-in">
         <Stack.Screen name="sign-in" />
         <Stack.Screen name="sign-up" />
@@ -29,8 +20,9 @@ export default function RootLayout() {
         <Stack.Screen name="add-ev-vehicle" />
         <Stack.Screen name="ev-network" />
         <Stack.Screen name="ev-station" />
+        <Stack.Screen name="payment" />
       </Stack>
       <StatusBar style="auto" />
-    </ThemeProvider>
+    </>
   );
 }

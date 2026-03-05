@@ -11,6 +11,7 @@ import DateTimePicker, {
 } from "@react-native-community/datetimepicker";
 import { useRoute } from "@react-navigation/native";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
 import {
@@ -25,6 +26,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const FILTER_TABS = ["Neaby", "Recommended", "Recent", "Favorite"];
 
 export default function EVStationScreen() {
+  const router = useRouter();
   const route = useRoute();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
@@ -265,7 +267,16 @@ export default function EVStationScreen() {
         <View className="my-8">
           <ActionButton
             title="BOOK CHARGER"
-            onPress={() => console.log("book")}
+            onPress={() =>
+              router.push({
+                pathname: "/payment",
+                params: {
+                  station: JSON.stringify(station),
+                  duration: calculateDuration(),
+                  total: "8.50",
+                },
+              })
+            }
             className="bg-emerald-500 rounded-full py-4 shadow-lg shadow-emerald-200"
             textClassName="text-white font-bold text-center tracking-widest"
           />
