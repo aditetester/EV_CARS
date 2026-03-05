@@ -8,6 +8,7 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import { Image } from "expo-image";
+import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
 import {
@@ -22,7 +23,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const STATIONS = [
   {
-    id: "1",
+    id: "BEOS2023091",
     name: "RB ROAD CHARGING STATION",
     address: "5th Street, LM Road\nXYZ City, US, LM509A",
     distance: "1.0 Km",
@@ -33,7 +34,7 @@ const STATIONS = [
   },
 
   {
-    id: "2",
+    id: "BEOS2023092",
     name: "SUBWAY CHARGING STATION",
     address: "10th Cross, laancer Road\nABC City, US, LM509A",
     distance: "2.5 Km",
@@ -44,7 +45,7 @@ const STATIONS = [
   },
 
   {
-    id: "3",
+    id: "BEOS2023093",
     name: "CHARLES CHARGING STATION",
     address: "101, VB Street, Simple Road\nFigma City, US, LM509A",
     distance: "1.0 Km",
@@ -58,6 +59,7 @@ const STATIONS = [
 const FILTER_TABS = ["Neaby", "Recommended", "Recent", "Favorite"];
 
 export default function EVNetworkScreen() {
+  const router = useRouter();
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const [viewMode, setViewMode] = useState<"location-pin" | "list">(
@@ -121,7 +123,15 @@ export default function EVNetworkScreen() {
             {/* BUTTON */}
             <ActionButton
               title="Slots Available"
-              onPress={() => console.log("Slots")}
+              onPress={() =>
+                router.push({
+                  pathname: "/ev-station",
+                  params: {
+                    station: JSON.stringify(item),
+                    from: "list",
+                  },
+                })
+              }
               className="bg-emerald-500 rounded-full px-4 py-1.5"
               textClassName="text-white text-[10px] font-semibold"
             />
@@ -207,6 +217,12 @@ export default function EVNetworkScreen() {
                     }}
                     title={station.name}
                     description={station.price}
+                    onCalloutPress={() =>
+                      router.push({
+                        pathname: "/ev-station",
+                        params: { station: JSON.stringify(station) },
+                      })
+                    }
                   >
                     <View className="items-center">
                       <View className="w-8 h-8 rounded-full bg-black border-2 border-white items-center justify-center shadow-lg">
