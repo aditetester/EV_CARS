@@ -71,7 +71,7 @@ export default function DashboardScreen() {
               title="Charging Stations"
               icon={require("../assets/images/dashboard/charging-icon.png")}
               color={isDark ? Colors.dark.emerald : Colors.light.emerald}
-              onPress={() => console.log("Charging Stations")}
+              onPress={() => router.push("/add-ev-vehicle")}
             />
             <ExploreItem
               title="Accessories"
