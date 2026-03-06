@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/theme";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
@@ -7,9 +8,13 @@ import { TouchableOpacity, View } from "react-native";
 const CartButton: React.FC = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+  const router = useRouter();
 
   return (
-    <TouchableOpacity className="w-12 h-12 bg-white dark:bg-black border-2 border-gray-100 dark:border-white/20 rounded-full items-center justify-center shadow-sm relative">
+    <TouchableOpacity
+      onPress={() => router.push("/accessories-cart")}
+      className="w-12 h-12 bg-white dark:bg-black border-2 border-gray-100 dark:border-white/20 rounded-full items-center justify-center shadow-sm relative"
+    >
       <Ionicons
         name="cart-outline"
         size={24}

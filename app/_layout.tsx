@@ -25,6 +25,9 @@ export default function RootLayout() {
         <Stack.Screen name="accessories" />
         <Stack.Screen name="accessory-list" />
         <Stack.Screen name="accessory-detail" />
+        <Stack.Screen name="accessories-cart" />
+        <Stack.Screen name="order-type" />
+        <Stack.Screen name="order-summary" />
       </Stack>
       <StatusBar style="auto" />
     </>

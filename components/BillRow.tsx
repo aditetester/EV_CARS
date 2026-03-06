@@ -16,7 +16,7 @@ const BillRow: React.FC<BillRowProps> = ({
 }) => (
   <View className="flex-row justify-between items-center mb-1">
     <Text
-      className={`${isTotal ? "font-bold text-yellow-500 text-lg" : "text-black dark:text-white font-medium"} text-sm`}
+      className={`${isTotal ? "font-bold text-yellow-500 text-lg" : "text-black dark:text-white font-medium"} text-sm ${isDiscount ? "text-emerald-500 font-bold" : ""}`}
     >
       {label}
     </Text>
