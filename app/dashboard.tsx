@@ -77,7 +77,7 @@ export default function DashboardScreen() {
               title="Accessories"
               icon={require("../assets/images/dashboard/accessories-icon.png")}
               color={isDark ? Colors.dark.emerald : Colors.light.emerald}
-              onPress={() => console.log("Accessories")}
+              onPress={() => router.push("/accessories")}
             />
             <ExploreItem
               title="Compare Cars"
