@@ -143,7 +143,12 @@ export default function AccessoriesScreen() {
               <TouchableOpacity
                 key={category.id}
                 className="items-center w-[22%]"
-                onPress={() => console.log(category.title)}
+                onPress={() =>
+                  router.push({
+                    pathname: "/accessory-list",
+                    params: { categoryTitle: category.title },
+                  })
+                }
               >
                 <View className="w-16 h-16 items-center justify-center mb-2">
                   <Image

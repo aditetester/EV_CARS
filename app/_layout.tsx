@@ -22,6 +22,9 @@ export default function RootLayout() {
         <Stack.Screen name="ev-station" />
         <Stack.Screen name="payment" />
         <Stack.Screen name="notification-preferences" />
+        <Stack.Screen name="accessories" />
+        <Stack.Screen name="accessory-list" />
+        <Stack.Screen name="accessory-detail" />
       </Stack>
       <StatusBar style="auto" />
     </>
