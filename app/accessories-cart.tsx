@@ -1,37 +1,15 @@
 import ActionButton from "@/components/ActionButton";
 import BillRow from "@/components/BillRow";
-import CartItemCard, { CartItem } from "@/components/CartItemCard";
+import CartItemCard from "@/components/CartItemCard";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-const CART_ITEMS: CartItem[] = [
-  {
-    id: "1",
-    title: "CEAT APTERRA HT",
-    subtitle: "215/75R15",
-    originalPrice: "$780.50",
-    discountPrice: "$680.50",
-    expectedDelivery: "20th November",
-    image: require("../assets/images/accessories-cart/cart-item-1.png"),
-    quantity: 1,
-  },
-  {
-    id: "2",
-    title: "KIA EV6 Wipers-Pack of 2 (Set)",
-    subtitle: "215/75R15",
-    originalPrice: "",
-    discountPrice: "$80.00",
-    expectedDelivery: "25th November",
-    image: require("../assets/images/accessories-cart/cart-item-2.png"),
-    quantity: 1,
-  },
-];
+import { useCart } from "../context/CartContext";
 
 const RECOMMENDED_PRODUCTS = [
   {
@@ -60,21 +38,15 @@ export default function AccessoriesCartScreen() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
-  const [items, setItems] = useState(CART_ITEMS);
+  const { items, updateQuantity, removeItem, addToCart } = useCart();
 
-  const updateQuantity = (id: string, delta: number) => {
-    setItems((prev) =>
-      prev.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item,
-      ),
-    );
-  };
-
-  const removeItem = (id: string) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  };
+  // calculate total
+  const itemTotal = items.reduce((sum, item) => {
+    const priceStr = item.discountPrice.replace(/[^0-9.]/g, "");
+    return sum + (parseFloat(priceStr) || 0) * item.quantity;
+  }, 0);
+  const discount = items.length > 0 ? 10 : 0;
+  const billTotal = Math.max(0, itemTotal - discount);
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-black">
@@ -102,12 +74,21 @@ export default function AccessoriesCartScreen() {
         {/* Cart Items List */}
         <View className="px-6 mb-4">
           {items.map((item) => (
-            <CartItemCard
+            <TouchableOpacity
               key={item.id}
-              item={item}
-              onUpdateQuantity={updateQuantity}
-              onRemove={removeItem}
-            />
+              activeOpacity={0.85}
+              onPress={() =>
+                router.push(
+                  `/payment?type=accessories&itemId=${item.id}` as any,
+                )
+              }
+            >
+              <CartItemCard
+                item={item}
+                onUpdateQuantity={updateQuantity}
+                onRemove={removeItem}
+              />
+            </TouchableOpacity>
           ))}
         </View>
 
@@ -147,7 +128,21 @@ export default function AccessoriesCartScreen() {
                   )}
                 </View>
                 {product.title !== "" && (
-                  <TouchableOpacity className="bg-emerald-500 rounded-lg py-1.5 items-center">
+                  <TouchableOpacity
+                    className="bg-emerald-500 rounded-lg py-1.5 items-center"
+                    onPress={() =>
+                      addToCart({
+                        id: product.id,
+                        title: product.title,
+                        subtitle: "Recommended Product",
+                        originalPrice: "$20",
+                        discountPrice: "$15",
+                        expectedDelivery: "20th November",
+                        image: product.image,
+                        quantity: 1,
+                      })
+                    }
+                  >
                     <Text className="text-[10px] font-black text-white uppercase">
                       ADD TO CART
                     </Text>
@@ -163,10 +158,14 @@ export default function AccessoriesCartScreen() {
           <Text className="text-lg font-black text-black dark:text-white mb-4">
             Bill Details
           </Text>
-          <BillRow label="Order Total" value="$760.50" />
-          <BillRow label="Product discount" value="-$10.00" isDiscount />
+          <BillRow label="Order Total" value={`$${itemTotal.toFixed(2)}`} />
+          <BillRow
+            label="Product discount"
+            value={`-$${discount.toFixed(2)}`}
+            isDiscount
+          />
           <View className="mt-2 pt-4 border-t border-gray-100 dark:border-white/10">
-            <BillRow label="TOTAL" value="$750.50" isTotal />
+            <BillRow label="TOTAL" value={`$${billTotal.toFixed(2)}`} isTotal />
           </View>
         </View>
 
@@ -243,7 +242,9 @@ export default function AccessoriesCartScreen() {
         {/* PAYMENT Button */}
         <ActionButton
           title="Payment"
-          onPress={() => router.push("/payment?type=accessories")}
+          onPress={() =>
+            router.push("/payment?type=accessories&itemId=all" as any)
+          }
           className="mr-6 ml-6 mb-2"
         />
       </ScrollView>

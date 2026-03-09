@@ -8,6 +8,8 @@ import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
 import { Modal, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useCart } from "../context/CartContext";
+import { useOrders } from "../context/OrderContext";
 
 export default function PaymentScreen() {
   const router = useRouter();
@@ -18,15 +20,76 @@ export default function PaymentScreen() {
     duration,
     total: totalFromParam,
     type,
+    itemId,
   } = useLocalSearchParams() as any;
   const isAccessories = type === "accessories";
   const station = stationJson ? JSON.parse(stationJson) : {};
   const orderTotal = totalFromParam || (isAccessories ? "760.50" : "8.50");
-  const finalTotal = isAccessories
-    ? "740.50"
-    : (parseFloat(orderTotal) - 1.0).toFixed(2);
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const { addOrder } = useOrders();
+  const { items: cartItems, clearCart, removeItem } = useCart();
+
+  // Which items to display: single item or all cart items
+  const displayItems = isAccessories
+    ? itemId && itemId !== "all"
+      ? cartItems.filter((i) => i.id === itemId)
+      : cartItems
+    : [];
+
+  // Compute bill totals from the displayed items
+  const mrp = displayItems.reduce((sum, item) => {
+    const price = parseFloat(item.originalPrice.replace(/[^0-9.]/g, "")) || 0;
+    return sum + price * item.quantity;
+  }, 0);
+  const discountedTotal = displayItems.reduce((sum, item) => {
+    const price = parseFloat(item.discountPrice.replace(/[^0-9.]/g, "")) || 0;
+    return sum + price * item.quantity;
+  }, 0);
+  const productDiscount = mrp - discountedTotal;
+  const couponDiscount = displayItems.length > 0 ? 10 : 0;
+  const billTotal = Math.max(0, discountedTotal - couponDiscount);
+
+  const finalTotal = isAccessories
+    ? billTotal.toFixed(2)
+    : (parseFloat(orderTotal) - 1.0).toFixed(2);
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+    if (isAccessories) {
+      // Add only the displayed items as orders
+      displayItems.forEach((item) => {
+        addOrder({
+          id: `BEOS${Math.floor(Math.random() * 100000)}`,
+          title: item.title,
+          dateTitle: "Expected Delivery",
+          date: item.expectedDelivery || "Soon",
+          image: item.image,
+          type: "ACCESSORIES",
+        });
+      });
+      // Remove only the paid item(s) from cart
+      if (itemId && itemId !== "all") {
+        removeItem(itemId);
+      } else {
+        clearCart();
+      }
+      router.replace("/orders");
+    } else {
+      addOrder({
+        id: `BEOS${Math.floor(Math.random() * 100000)}`,
+        title: `${station.name || "Station"} Charging\nDuration : ${duration || "1hr 30min"}`,
+        dateTitle: "Delivered on",
+        date: new Date().toLocaleDateString("en-GB", {
+          day: "numeric",
+          month: "long",
+        }),
+        image: require("../assets/images/ev-network/stations.jpg"),
+        type: "CHARGING",
+      });
+      router.replace("/orders");
+    }
+  };
 
   const OrderDetailItem = ({
     label,
@@ -76,62 +139,54 @@ export default function PaymentScreen() {
         {/* ORDER ITEMS / ID Box */}
         {isAccessories ? (
           <View className="bg-gray-50 dark:bg-gray-900 rounded-[32px] p-4 mb-4">
-            {/* Item 1 */}
-            <View className="flex-row items-center mb-4">
-              <View className="w-16 h-16 bg-white dark:bg-black rounded-2xl items-center justify-center p-1 mr-4 border border-gray-100 dark:border-white/5">
-                <Image
-                  source={require("../assets/images/accessories-cart/cart-item-1.png")}
-                  style={{ width: "90%", height: "90%", borderRadius: 6 }}
-                  contentFit="cover"
-                />
-              </View>
-              <View className="flex-1">
-                <Text className="text-emerald-500 font-bold text-[10px]">
-                  215/75R15
-                </Text>
-                <Text className="text-[10px] text-gray-400 font-medium italic mt-0.5">
-                  Delivery by 20th November
-                </Text>
-              </View>
-              <View className="items-end">
-                <Text className="text-xs text-gray-400 font-bold line-through">
-                  $780.50
-                </Text>
-                <Text className="text-sm font-black text-yellow-500">
-                  $680.50
-                </Text>
-              </View>
-            </View>
-
-            {/* Divider */}
-            <View className="h-[1px] bg-gray-200 dark:bg-white/5 mb-4" />
-
-            {/* Item 2 */}
-            <View className="flex-row items-center">
-              <View className="w-16 h-16 bg-white dark:bg-black rounded-2xl items-center justify-center p-1 mr-4 border border-gray-100 dark:border-white/5">
-                <Image
-                  source={require("../assets/images/accessories-cart/cart-item-2.png")}
-                  style={{ width: "90%", height: "90%", borderRadius: 6 }}
-                  contentFit="cover"
-                />
-              </View>
-              <View className="flex-1">
-                <Text className="text-emerald-500 font-bold text-[10px]">
-                  215/75R15
-                </Text>
-                <Text className="text-xs font-black text-yellow-500 uppercase leading-tight mt-0.5">
-                  KIA EV6 Wipers-Pack of{"\n"}2 (Set)
-                </Text>
-                <Text className="text-[10px] text-gray-400 font-medium italic mt-0.5">
-                  Delivery by 20th November
-                </Text>
-              </View>
-              <View className="items-end justify-end">
-                <Text className="text-sm font-black text-yellow-500">
-                  $80.00
-                </Text>
-              </View>
-            </View>
+            {displayItems.length === 0 ? (
+              <Text className="text-gray-400 text-sm text-center py-4">
+                No items found
+              </Text>
+            ) : (
+              displayItems.map((item, index) => (
+                <View key={item.id}>
+                  {index > 0 && (
+                    <View className="h-[1px] bg-gray-200 dark:bg-white/5 my-4" />
+                  )}
+                  <View className="flex-row items-center">
+                    <View className="w-16 h-16 bg-white dark:bg-black rounded-2xl items-center justify-center p-1 mr-4 border border-gray-100 dark:border-white/5">
+                      <Image
+                        source={item.image}
+                        style={{ width: "90%", height: "90%", borderRadius: 6 }}
+                        contentFit="cover"
+                      />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-emerald-500 font-bold text-[10px]">
+                        {item.subtitle}
+                      </Text>
+                      <Text className="text-xs font-black text-yellow-500 uppercase leading-tight mt-0.5">
+                        {item.title}
+                      </Text>
+                      <Text className="text-[10px] text-gray-400 font-medium italic mt-0.5">
+                        Delivery by {item.expectedDelivery}
+                      </Text>
+                    </View>
+                    <View className="items-end">
+                      {item.originalPrice !== "" && (
+                        <Text className="text-xs text-gray-400 font-bold line-through">
+                          {item.originalPrice}
+                        </Text>
+                      )}
+                      <Text className="text-sm font-black text-yellow-500">
+                        {item.discountPrice}
+                      </Text>
+                      {item.quantity > 1 && (
+                        <Text className="text-[10px] text-gray-400 font-medium mt-0.5">
+                          Qty: {item.quantity}
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                </View>
+              ))
+            )}
           </View>
         ) : (
           <View className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 shadow-sm mb-3">
@@ -196,13 +251,28 @@ export default function PaymentScreen() {
           </Text>
           {isAccessories ? (
             <>
-              <BillRow label="MRP" value="$760.50" />
-              <BillRow label="Product discount" value="-$10.00" isDiscount />
-              <BillRow label="Item total" value="$750.50" />
-              <BillRow label="Coupon Code" value="-$10.00" isDiscount />
+              <BillRow label="MRP" value={`$${mrp.toFixed(2)}`} />
+              <BillRow
+                label="Product discount"
+                value={`-$${productDiscount.toFixed(2)}`}
+                isDiscount
+              />
+              <BillRow
+                label="Item total"
+                value={`$${discountedTotal.toFixed(2)}`}
+              />
+              <BillRow
+                label="Coupon Code"
+                value={`-$${couponDiscount.toFixed(2)}`}
+                isDiscount
+              />
               <BillRow label="Delivery Charges" value="Free" />
               <View className="mt-2 pt-2 border-t border-gray-100 dark:border-white/5">
-                <BillRow label="Bill total" value="$740.50" isTotal />
+                <BillRow
+                  label="Bill total"
+                  value={`$${billTotal.toFixed(2)}`}
+                  isTotal
+                />
               </View>
             </>
           ) : (
@@ -270,10 +340,7 @@ export default function PaymentScreen() {
         visible={showSuccessModal}
         transparent={!isAccessories}
         animationType="fade"
-        onRequestClose={() => {
-          setShowSuccessModal(false);
-          if (isAccessories) router.replace("/order-type" as any);
-        }}
+        onRequestClose={handleCloseSuccessModal}
       >
         <View
           className={`flex-1 ${
@@ -388,7 +455,7 @@ export default function PaymentScreen() {
                   />
                   <ActionButton
                     title="ACCESS CHARGING STATION"
-                    onPress={() => setShowSuccessModal(false)}
+                    onPress={handleCloseSuccessModal}
                     className="bg-emerald-500 rounded-full py-4"
                     textClassName="text-white font-bold text-center tracking-widest text-md"
                   />
@@ -399,10 +466,7 @@ export default function PaymentScreen() {
 
           {/* Close Button */}
           <TouchableOpacity
-            onPress={() => {
-              setShowSuccessModal(false);
-              if (isAccessories) router.replace("/order-type" as any);
-            }}
+            onPress={handleCloseSuccessModal}
             className={`${
               isAccessories ? "absolute top-4 right-6" : "mt-12 self-center"
             } bg-gray-800 w-14 h-14 rounded-full items-center justify-center shadow-lg`}

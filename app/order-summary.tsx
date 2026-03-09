@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
@@ -9,81 +9,21 @@ import BillRow from "../components/BillRow";
 
 export default function OrderSummaryScreen() {
   const router = useRouter();
+  const { id, type, title, dateTitle, date, image } =
+    useLocalSearchParams() as any;
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
 
+  // Safely parse image
+  let parsedImage: any = null;
+  try {
+    parsedImage = image ? JSON.parse(image) : null;
+  } catch {
+    parsedImage = null;
+  }
+
   const statusSteps = ["Confirmed", "Dispatched", "Delivered"];
   const currentStep = 0; // Confirmed
-
-  const OrderItem = ({
-    title,
-    price,
-    originalPrice,
-    hasActiveBorder,
-  }: {
-    title: string;
-    price: string;
-    originalPrice: string;
-    hasActiveBorder?: boolean;
-  }) => (
-    <View className="bg-gray-50 dark:bg-gray-900 rounded-[32px] p-5 mb-4 border border-gray-100 dark:border-white/5">
-      <View className="flex-row">
-        {/* Image Section */}
-        <View className="w-24 h-24 bg-white dark:bg-black rounded-2xl mr-4 items-center justify-center p-2" />
-
-        {/* Content Section */}
-        <View className="flex-1">
-          <View className="flex-row justify-between items-start mb-2">
-            <Text
-              className="flex-1 text-sm font-black text-black dark:text-white leading-tight pr-2"
-              numberOfLines={2}
-            >
-              {title}
-            </Text>
-            <View className="items-end">
-              <Text className="text-slate-400 text-sm font-bold">
-                {originalPrice}
-              </Text>
-              <Text className="text-yellow-500 text-sm font-black mt-0.5">
-                {price}
-              </Text>
-            </View>
-          </View>
-
-          {/* Item Status Tracker */}
-          <View className="mt-4 mr-2 mb-2">
-            <View className="relative w-full">
-              {/* Connecting line: spans from center of first circle to center of last circle */}
-              <View className="absolute top-[7px] left-[28px] right-[28px] h-[2px] bg-slate-300 dark:bg-white/20" />
-
-              <View className="flex-row justify-between w-full relative z-10">
-                {statusSteps.map((step, index) => (
-                  <View key={step} className="items-center w-14">
-                    <View
-                      className={`w-4 h-4 rounded-full border-2 shadow-[0_1px_2px_rgba(0,0,0,0.1)] ${
-                        index <= currentStep
-                          ? "border-yellow-500 bg-emerald-500"
-                          : "border-gray-300 bg-white"
-                      }`}
-                    />
-                    <Text
-                      className={`text-[9px] font-bold italic mt-1.5 text-center ${
-                        index <= currentStep
-                          ? "text-black dark:text-white"
-                          : "text-gray-400"
-                      }`}
-                    >
-                      {step}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  );
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-black">
@@ -110,84 +50,238 @@ export default function OrderSummaryScreen() {
       </View>
 
       <ScrollView className="flex-1 px-6" showsVerticalScrollIndicator={false}>
-        <Text className="text-sm font-black text-black dark:text-white uppercase mb-4">
-          3 items in this order
-        </Text>
+        {type === "CHARGING" ? (
+          <>
+            {/* Charging Order Item */}
+            <View className="bg-gray-50 dark:bg-gray-900 rounded-[32px] p-5 mb-4 border border-gray-100 dark:border-white/5 flex-row">
+              <View className="w-[88px] h-[88px] rounded-2xl overflow-hidden mr-4">
+                <Image
+                  source={require("../assets/images/ev-network/stations.jpg")}
+                  style={{ width: "100%", height: "100%" }}
+                  contentFit="cover"
+                />
+              </View>
+              <View className="flex-1 justify-between py-0.5">
+                <View className="flex-row justify-between items-start">
+                  <Text
+                    className="text-sm font-black text-black dark:text-white leading-tight flex-1"
+                    numberOfLines={1}
+                  >
+                    BR Road Charging ...
+                  </Text>
+                  <View className="items-end pl-2">
+                    <Text className="text-[10px] text-gray-400 font-bold">
+                      Duration
+                    </Text>
+                    <Text className="text-[11px] font-black text-black dark:text-white mt-0.5">
+                      1hr 30min
+                    </Text>
+                  </View>
+                </View>
 
-        <OrderItem
-          title="Alloy Wheels 16 Inches for KIA EV6"
-          originalPrice="$780.50"
-          price="$680.50"
-          hasActiveBorder
-        />
-        <OrderItem
-          title="Alloy Wheels 16 Inches for KIA EV6"
-          originalPrice="$780.50"
-          price="$680.50"
-        />
-        <OrderItem
-          title="Alloy Wheels 16 Inches for KIA EV6"
-          originalPrice="$780.50"
-          price="$680.50"
-        />
+                <View className="flex-row justify-between items-end">
+                  <View>
+                    <Text className="text-[10px] text-gray-400 font-bold">
+                      Date & Time
+                    </Text>
+                    <Text className="text-[11px] font-black text-black dark:text-white mt-0.5">
+                      16th Nov 23
+                    </Text>
+                    <Text className="text-[11px] font-black text-black dark:text-white">
+                      12:30 PM
+                    </Text>
+                  </View>
+                  <Text className="text-[13px] font-black text-black dark:text-white">
+                    $8.50
+                  </Text>
+                </View>
+              </View>
+            </View>
 
-        {/* Bill Details */}
-        <View className="bg-white dark:bg-gray-900 shadow-sm rounded-3xl border border-gray-100 dark:border-white/5 px-5 py-5 mb-6 mt-4">
-          <Text className="font-black text-lg mb-4 dark:text-white uppercase">
-            Bill details
-          </Text>
-          <BillRow label="MRP" value="$2341.50" />
-          <BillRow label="Product discount" value="-$300.00" isDiscount />
-          <BillRow label="Item total" value="$2041.50" />
-          <BillRow label="Coupon Code" value="-$250.50" isDiscount />
-          <BillRow label="Delivery Charges" value="Free" />
-          <View className="mt-3 pt-3 border-t border-gray-50 dark:border-white/5">
-            <BillRow label="Bill total" value="$1791.00" isTotal />
-          </View>
-        </View>
+            {/* Bill Details */}
+            <View className="bg-white dark:bg-gray-900 shadow-sm rounded-3xl border border-gray-100 dark:border-white/5 px-5 py-5 mb-6 mt-4">
+              <Text className="font-black text-base mb-4 dark:text-white">
+                Bill details
+              </Text>
+              <BillRow label="MRP" value="$8.50" />
+              <BillRow label="Product discount" value="-₹00.00" isDiscount />
+              <BillRow label="Item total" value="$8.50" />
+              <BillRow label="Coupon Code" value="-$1.00" isDiscount />
+              <BillRow label="Delivery Charges" value="Free" />
+              <View className="mt-3 pt-3 border-t border-gray-50 dark:border-white/5">
+                <BillRow label="Bill total" value="$7.50" isTotal />
+              </View>
+            </View>
 
-        {/* Order details */}
-        <View className="bg-white dark:bg-gray-900 shadow-sm rounded-3xl border border-gray-100 dark:border-white/5 px-5 py-5 mb-6">
-          <Text className="font-black text-lg mb-4 dark:text-white uppercase">
-            Order details
-          </Text>
+            {/* Order details */}
+            <View className="bg-white dark:bg-gray-900 shadow-sm rounded-3xl border border-gray-100 dark:border-white/5 px-5 py-5 mb-6">
+              <Text className="font-black text-base mb-4 dark:text-white">
+                Order details
+              </Text>
 
-          <View className="mb-4">
-            <Text className="text-gray-400 text-[10px] uppercase font-bold">
-              Order id
-            </Text>
-            <Text className="font-black text-black dark:text-white text-xs mt-0.5">
-              BEOS2030912
-            </Text>
-          </View>
+              <View className="mb-4">
+                <Text className="text-gray-400 text-[10px] uppercase font-bold">
+                  Order id
+                </Text>
+                <Text className="font-black text-black dark:text-white text-xs mt-0.5">
+                  {id || "BEOS203P113"}
+                </Text>
+              </View>
 
-          <View className="mb-4">
-            <Text className="text-gray-400 text-[10px] uppercase font-bold">
-              Payment
-            </Text>
-            <Text className="font-black text-black dark:text-white text-xs mt-0.5">
-              Paid Online
-            </Text>
-          </View>
+              <View className="mb-4">
+                <Text className="text-gray-400 text-[10px] uppercase font-bold">
+                  Payment
+                </Text>
+                <Text className="font-black text-black dark:text-white text-xs mt-0.5">
+                  Paid Online
+                </Text>
+              </View>
 
-          <View className="mb-4">
-            <Text className="text-gray-400 text-[10px] uppercase font-bold">
-              Delivered to
-            </Text>
-            <Text className="font-black text-black dark:text-white text-xs mt-0.5 leading-tight">
-              102. LB St. Street, Calvery, Onixo, Texas, BHA 5043
-            </Text>
-          </View>
+              <View className="mb-4">
+                <Text className="text-gray-400 text-[10px] uppercase font-bold">
+                  Station Address
+                </Text>
+                <Text className="font-black text-black dark:text-white text-xs mt-0.5 leading-tight">
+                  4th Floor, JB Nagar, Whitefield, Bangalore, 560066
+                </Text>
+              </View>
 
-          <View>
-            <Text className="text-gray-400 text-[10px] uppercase font-bold">
-              Order placed
+              <View>
+                <Text className="text-gray-400 text-[10px] uppercase font-bold">
+                  Order placed
+                </Text>
+                <Text className="font-black text-black dark:text-white text-xs mt-0.5">
+                  15th November 2023, 7:14PM
+                </Text>
+              </View>
+            </View>
+          </>
+        ) : (
+          <>
+            <Text className="text-sm font-black text-black dark:text-white uppercase mb-4">
+              Order item
             </Text>
-            <Text className="font-black text-black dark:text-white text-xs mt-0.5">
-              15th November 2023, 7:14PM
-            </Text>
-          </View>
-        </View>
+
+            {/* Real order item */}
+            <View className="bg-gray-50 dark:bg-gray-900 rounded-[32px] p-5 mb-4 border border-gray-100 dark:border-white/5">
+              <View className="flex-row">
+                {/* Image Section */}
+                <View className="w-24 h-24 bg-white dark:bg-black rounded-2xl mr-4 items-center justify-center overflow-hidden">
+                  {parsedImage ? (
+                    <Image
+                      source={parsedImage}
+                      style={{ width: "100%", height: "100%" }}
+                      contentFit="cover"
+                    />
+                  ) : (
+                    <View className="w-full h-full bg-gray-200 dark:bg-gray-700" />
+                  )}
+                </View>
+
+                {/* Content Section */}
+                <View className="flex-1">
+                  <Text
+                    className="text-sm font-black text-black dark:text-white leading-tight mb-2"
+                    numberOfLines={2}
+                  >
+                    {title || "Order Item"}
+                  </Text>
+
+                  <Text className="text-[10px] text-gray-500 font-medium">
+                    {dateTitle || "Expected Delivery"} : {date || ""}
+                  </Text>
+
+                  {/* Item Status Tracker */}
+                  <View className="mt-4 mr-2 mb-2">
+                    <View className="relative w-full">
+                      <View className="absolute top-[7px] left-[28px] right-[28px] h-[2px] bg-slate-300 dark:bg-white/20" />
+                      <View className="flex-row justify-between w-full relative z-10">
+                        {statusSteps.map((step, index) => (
+                          <View key={step} className="items-center w-14">
+                            <View
+                              className={`w-4 h-4 rounded-full border-2 shadow-[0_1px_2px_rgba(0,0,0,0.1)] ${
+                                index <= currentStep
+                                  ? "border-yellow-500 bg-emerald-500"
+                                  : "border-gray-300 bg-white"
+                              }`}
+                            />
+                            <Text
+                              className={`text-[9px] font-bold italic mt-1.5 text-center ${
+                                index <= currentStep
+                                  ? "text-black dark:text-white"
+                                  : "text-gray-400"
+                              }`}
+                            >
+                              {step}
+                            </Text>
+                          </View>
+                        ))}
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            {/* Bill Details */}
+            <View className="bg-white dark:bg-gray-900 shadow-sm rounded-3xl border border-gray-100 dark:border-white/5 px-5 py-5 mb-6 mt-4">
+              <Text className="font-black text-lg mb-4 dark:text-white uppercase">
+                Bill details
+              </Text>
+              <BillRow label="MRP" value="$2341.50" />
+              <BillRow label="Product discount" value="-$300.00" isDiscount />
+              <BillRow label="Item total" value="$2041.50" />
+              <BillRow label="Coupon Code" value="-$250.50" isDiscount />
+              <BillRow label="Delivery Charges" value="Free" />
+              <View className="mt-3 pt-3 border-t border-gray-50 dark:border-white/5">
+                <BillRow label="Bill total" value="$1791.00" isTotal />
+              </View>
+            </View>
+
+            {/* Order details */}
+            <View className="bg-white dark:bg-gray-900 shadow-sm rounded-3xl border border-gray-100 dark:border-white/5 px-5 py-5 mb-6">
+              <Text className="font-black text-lg mb-4 dark:text-white uppercase">
+                Order details
+              </Text>
+
+              <View className="mb-4">
+                <Text className="text-gray-400 text-[10px] uppercase font-bold">
+                  Order id
+                </Text>
+                <Text className="font-black text-black dark:text-white text-xs mt-0.5">
+                  {id || "BEOS2030912"}
+                </Text>
+              </View>
+
+              <View className="mb-4">
+                <Text className="text-gray-400 text-[10px] uppercase font-bold">
+                  Payment
+                </Text>
+                <Text className="font-black text-black dark:text-white text-xs mt-0.5">
+                  Paid Online
+                </Text>
+              </View>
+
+              <View className="mb-4">
+                <Text className="text-gray-400 text-[10px] uppercase font-bold">
+                  Delivered to
+                </Text>
+                <Text className="font-black text-black dark:text-white text-xs mt-0.5 leading-tight">
+                  102. LB St. Street, Calvery, Onixo, Texas, BHA 5043
+                </Text>
+              </View>
+
+              <View>
+                <Text className="text-gray-400 text-[10px] uppercase font-bold">
+                  {dateTitle || "Order placed"}
+                </Text>
+                <Text className="font-black text-black dark:text-white text-xs mt-0.5">
+                  {date || "15th November 2023, 7:14PM"}
+                </Text>
+              </View>
+            </View>
+          </>
+        )}
 
         {/* Need Help Section */}
         <TouchableOpacity className="bg-gray-50 dark:bg-gray-900 rounded-[32px] px-6 py-6 mb-10 flex-row items-center border border-gray-100 dark:border-white/5">

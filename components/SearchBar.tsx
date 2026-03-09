@@ -6,23 +6,31 @@ interface SearchBarProps {
   onFocusChange?: (isFocused: boolean) => void;
   onPress?: () => void;
   autoFocus?: boolean;
+  value?: string;
+  onChangeText?: (text: string) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   onFocusChange,
   onPress,
   autoFocus,
+  value,
+  onChangeText,
 }) => {
   const theme = useTheme();
   const inputElement = (
     <TextInput
       placeholder="I am looking for"
       placeholderTextColor={theme.muted}
-      className="text-gray-600 dark:text-white"
+      className="flex-1 h-10 ml-2 text-gray-600 dark:text-white"
       autoFocus={autoFocus}
       editable={!onPress}
+      value={value}
+      onChangeText={onChangeText}
       onFocus={() => onFocusChange?.(true)}
       onBlur={() => onFocusChange?.(false)}
+      textAlignVertical="center"
+      style={{ paddingVertical: 0 }}
     />
   );
 

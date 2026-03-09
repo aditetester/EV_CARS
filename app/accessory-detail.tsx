@@ -33,7 +33,7 @@ export default function AccessoryDetailScreen() {
         </TouchableOpacity>
 
         <View className="flex-row items-center gap-1">
-          <SearchButton />
+          <SearchButton onPress={() => router.push("/accessories-search")} />
           <TouchableOpacity onPress={() => setIsFavorite(!isFavorite)}>
             <View className="w-12 h-12 bg-white dark:bg-black border-2 border-gray-100 dark:border-white/20 rounded-full items-center justify-center shadow-sm">
               <Ionicons

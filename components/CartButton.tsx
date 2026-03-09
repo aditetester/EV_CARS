@@ -3,12 +3,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import { useCart } from "../context/CartContext";
 
 const CartButton: React.FC = () => {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
+  const { items } = useCart();
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <TouchableOpacity
@@ -21,9 +24,11 @@ const CartButton: React.FC = () => {
         color={isDark ? Colors.dark.text : Colors.light.text}
       />
       {/* Badge */}
-      <View className="absolute top-2 right-2 w-4 h-4 bg-emerald-500 rounded-full items-center justify-center border-2 border-white dark:border-black">
-        <View className="w-1.5 h-1.5 bg-white rounded-full" />
-      </View>
+      {itemCount > 0 && (
+        <View className="absolute top-1 right-1 min-w-[18px] h-[18px] bg-red-500 rounded-full items-center justify-center border-2 border-white dark:border-black px-1">
+          <Text className="text-[9px] font-black text-white">{itemCount}</Text>
+        </View>
+      )}
     </TouchableOpacity>
   );
 };

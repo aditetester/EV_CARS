@@ -102,9 +102,8 @@ export default function AccessoriesScreen() {
       </View>
 
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Search Bar Section */}
         <View className="px-6 mb-6">
-          <SearchBar />
+          <SearchBar onPress={() => router.push("/accessories-search")} />
         </View>
 
         {/* Promo Banner Carousel */}

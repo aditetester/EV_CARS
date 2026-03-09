@@ -1,5 +1,6 @@
 import { Colors } from "@/constants/theme";
 import { FontAwesome5, Ionicons, MaterialIcons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React from "react";
@@ -28,6 +29,7 @@ export default function ProfileScreen() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
+  const navigation = useNavigation<any>();
 
   // Data for the top action grid
   const actionGridItems = [
@@ -117,7 +119,11 @@ export default function ProfileScreen() {
             />
           ),
           label: "Log out",
-          action: () => router.replace("/sign-in"),
+          action: () =>
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "sign-in" }],
+            }),
         },
       ],
     },
@@ -169,7 +175,15 @@ export default function ProfileScreen() {
         {/* Action Grid */}
         <View className="flex-row justify-between mb-6 px-10">
           {actionGridItems.map((item, index) => (
-            <TouchableOpacity key={index} className="items-center w-[22%]">
+            <TouchableOpacity
+              key={index}
+              className="items-center w-[22%]"
+              onPress={() => {
+                if (item.label === "Orders") {
+                  router.push("/orders");
+                }
+              }}
+            >
               <View
                 style={{
                   backgroundColor: isDark

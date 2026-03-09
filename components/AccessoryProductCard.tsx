@@ -6,6 +6,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 
 export interface AccessoryProduct {
   id: string;
+  type: string;
   title: string;
   image: any;
   originalPrice: string;
