@@ -309,7 +309,23 @@ export default function CarDetailScreen() {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-1 bg-[#A1131E] py-4 items-center rounded-md ml-2 mb-10">
+          <TouchableOpacity
+            onPress={() =>
+              router.push({
+                pathname: "/payment",
+                params: {
+                  type: "vehicle",
+                  brand: brand as string,
+                  carName: carName as string,
+                  price: price as string,
+                  image: JSON.stringify(
+                    require("../assets/images/car-detail/car.png"),
+                  ),
+                },
+              })
+            }
+            className="flex-1 bg-[#A1131E] py-4 items-center rounded-md ml-2 mb-10"
+          >
             <Text className="text-white font-bold text-xs uppercase">
               Buy Now
             </Text>

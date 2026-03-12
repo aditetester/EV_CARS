@@ -1,6 +1,5 @@
 import CartButton from "@/components/CartButton";
 import ProfileButton from "@/components/ProfileButton";
-import SearchButton from "@/components/SearchButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -9,12 +8,14 @@ import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { ALL_PRODUCTS } from "./accessory-list";
 
 export default function AccessoryDetailScreen() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
-  const { title = "CEAT APTERRA HT" } = useLocalSearchParams();
+  const { id } = useLocalSearchParams<{ id: string }>();
+  const product = ALL_PRODUCTS.find((p) => p.id === id);
   const [isFavorite, setIsFavorite] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
@@ -33,7 +34,7 @@ export default function AccessoryDetailScreen() {
         </TouchableOpacity>
 
         <View className="flex-row items-center gap-1">
-          <SearchButton onPress={() => router.push("/accessories-search")} />
+          {/* <SearchButton onPress={() => router.push("/accessories-search")} /> */}
           <TouchableOpacity onPress={() => setIsFavorite(!isFavorite)}>
             <View className="w-12 h-12 bg-white dark:bg-black border-2 border-gray-100 dark:border-white/20 rounded-full items-center justify-center shadow-sm">
               <Ionicons
@@ -52,7 +53,7 @@ export default function AccessoryDetailScreen() {
         {/* Product Title */}
         <View className="px-6 mb-4">
           <Text className="text-xl font-black text-black dark:text-white uppercase">
-            {title}
+            {product?.title}
           </Text>
         </View>
 
@@ -82,7 +83,7 @@ export default function AccessoryDetailScreen() {
           </View>
 
           <Image
-            source={require("../assets/images/accessories-detail/tyre.jpg")}
+            source={product?.image}
             style={{ width: "90%", height: "90%", borderRadius: 10 }}
             contentFit={isDark ? "cover" : "contain"}
           />
@@ -96,7 +97,7 @@ export default function AccessoryDetailScreen() {
                 APTERRA HT
               </Text>
               <Text className="text-lg font-bold text-black dark:text-white">
-                Tubeless Tyre
+                {product?.title}
               </Text>
               <Text className="text-sm text-gray-500 font-medium">
                 5 years warranty
@@ -105,15 +106,16 @@ export default function AccessoryDetailScreen() {
             <View className="items-end">
               <View className="flex-row items-center gap-2 mb-1">
                 <View className="flex-row items-center">
-                  {[1, 2, 3, 4].map((star) => (
+                  {[...Array(5)].map((_, i) => (
                     <Ionicons
-                      key={star}
-                      name="star"
+                      key={i}
+                      name={
+                        i < (product?.rating ?? 0) ? "star" : "star-outline"
+                      }
                       size={14}
                       color="#FFD700"
                     />
                   ))}
-                  <Ionicons name="star-outline" size={14} color="#FFD700" />
                 </View>
                 <TouchableOpacity onPress={() => setIsFavorite(!isFavorite)}>
                   <Ionicons
@@ -124,10 +126,10 @@ export default function AccessoryDetailScreen() {
                 </TouchableOpacity>
               </View>
               <Text className="text-sm text-gray-400 line-through">
-                $780.50
+                {product?.originalPrice}
               </Text>
               <Text className="text-xl font-black text-yellow-500">
-                $680.50
+                {product?.discountPrice}
               </Text>
             </View>
           </View>
@@ -135,7 +137,9 @@ export default function AccessoryDetailScreen() {
           {/* Selector and Quantity Row */}
           <View className="flex-row items-center justify-between mb-2">
             <TouchableOpacity className="border-2 border-emerald-500 rounded-full px-6 py-1">
-              <Text className="text-emerald-500 font-bold">215/75R15</Text>
+              <Text className="text-emerald-500 font-bold">
+                {product?.options}
+              </Text>
             </TouchableOpacity>
 
             <View className="flex-row items-center bg-gray-100 dark:bg-gray-800 rounded-full">
@@ -208,9 +212,7 @@ export default function AccessoryDetailScreen() {
               Details
             </Text>
             <Text className="text-sm text-gray-500 leading-relaxed text-justify">
-              The Alnac offers high-quality driving precision, outstanding
-              control, improved braking and impeccable stability while
-              cornering.
+              {product?.description}
             </Text>
           </View>
 

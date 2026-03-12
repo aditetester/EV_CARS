@@ -109,6 +109,7 @@ export default function ProfileScreen() {
             />
           ),
           label: "Referral",
+          action: () => router.push("/referral"),
         },
         {
           icon: (

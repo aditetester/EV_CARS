@@ -35,6 +35,7 @@ export default function RootLayout() {
           <Stack.Screen name="accessories-cart" />
           <Stack.Screen name="order-type" />
           <Stack.Screen name="order-summary" />
+          <Stack.Screen name="referral" />
         </Stack>
         <StatusBar style="auto" />
       </CartProvider>

@@ -94,7 +94,7 @@ export const ALL_PRODUCTS: AccessoryProduct[] = [
     image: require("../assets/images/accessories/lights.png"),
     originalPrice: "$85.00",
     discountPrice: "$70.00",
-    rating: 4,
+    rating: 3,
     description: "Bright white LED headlight for increased visibility.",
     options: "H4 6000K",
     status: "available",

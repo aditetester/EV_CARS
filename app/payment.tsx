@@ -21,14 +21,29 @@ export default function PaymentScreen() {
     total: totalFromParam,
     type,
     itemId,
+    brand,
+    carName,
+    price: carPrice,
+    image: carImageParam,
   } = useLocalSearchParams() as any;
   const isAccessories = type === "accessories";
+  const isVehicle = type === "vehicle";
   const station = stationJson ? JSON.parse(stationJson) : {};
-  const orderTotal = totalFromParam || (isAccessories ? "760.50" : "8.50");
+  const orderTotal =
+    totalFromParam ||
+    (isAccessories ? "760.50" : isVehicle ? carPrice : "8.50");
 
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const { addOrder } = useOrders();
   const { items: cartItems, clearCart, removeItem } = useCart();
+
+  // Safely parse car image
+  let parsedCarImage: any = null;
+  try {
+    parsedCarImage = carImageParam ? JSON.parse(carImageParam) : null;
+  } catch {
+    parsedCarImage = null;
+  }
 
   // Which items to display: single item or all cart items
   const displayItems = isAccessories
@@ -38,21 +53,28 @@ export default function PaymentScreen() {
     : [];
 
   // Compute bill totals from the displayed items
-  const mrp = displayItems.reduce((sum, item) => {
-    const price = parseFloat(item.originalPrice.replace(/[^0-9.]/g, "")) || 0;
-    return sum + price * item.quantity;
-  }, 0);
-  const discountedTotal = displayItems.reduce((sum, item) => {
-    const price = parseFloat(item.discountPrice.replace(/[^0-9.]/g, "")) || 0;
-    return sum + price * item.quantity;
-  }, 0);
+  const mrp = isVehicle
+    ? parseFloat(carPrice?.replace(/[^0-9.]/g, "")) || 0
+    : displayItems.reduce((sum, item) => {
+        const price =
+          parseFloat(item.originalPrice.replace(/[^0-9.]/g, "")) || 0;
+        return sum + price * item.quantity;
+      }, 0);
+  const discountedTotal = isVehicle
+    ? mrp
+    : displayItems.reduce((sum, item) => {
+        const price =
+          parseFloat(item.discountPrice.replace(/[^0-9.]/g, "")) || 0;
+        return sum + price * item.quantity;
+      }, 0);
   const productDiscount = mrp - discountedTotal;
-  const couponDiscount = displayItems.length > 0 ? 10 : 0;
+  const couponDiscount = isVehicle ? 0 : displayItems.length > 0 ? 10 : 0;
   const billTotal = Math.max(0, discountedTotal - couponDiscount);
 
-  const finalTotal = isAccessories
-    ? billTotal.toFixed(2)
-    : (parseFloat(orderTotal) - 1.0).toFixed(2);
+  const finalTotal =
+    isAccessories || isVehicle
+      ? billTotal.toFixed(2)
+      : (parseFloat(orderTotal) - 1.0).toFixed(2);
 
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
@@ -74,6 +96,16 @@ export default function PaymentScreen() {
       } else {
         clearCart();
       }
+      router.replace("/orders");
+    } else if (isVehicle) {
+      addOrder({
+        id: `BEOS${Math.floor(Math.random() * 100000)}`,
+        title: `${brand} ${carName}`,
+        dateTitle: "Expected Delivery",
+        date: "Within 7 Days",
+        image: parsedCarImage || require("../assets/images/car-detail/car.png"),
+        type: "VEHICLE BOOKING",
+      });
       router.replace("/orders");
     } else {
       addOrder({
@@ -120,7 +152,7 @@ export default function PaymentScreen() {
           />
         </TouchableOpacity>
       </View>
-      {isAccessories && (
+      {(isAccessories || isVehicle) && (
         <View className="px-8">
           <Text className="font-black text-2xl dark:text-white uppercase">
             Payment
@@ -130,7 +162,7 @@ export default function PaymentScreen() {
           </Text>
         </View>
       )}
-      {!isAccessories && (
+      {!isAccessories && !isVehicle && (
         <Text className="text-center font-bold text-2xl mb-2 dark:text-white">
           Order Details
         </Text>
@@ -187,6 +219,37 @@ export default function PaymentScreen() {
                 </View>
               ))
             )}
+          </View>
+        ) : isVehicle ? (
+          <View className="bg-gray-50 dark:bg-gray-900 rounded-[32px] p-4 mb-4">
+            <View className="flex-row items-center">
+              <View className="w-24 h-16 bg-white dark:bg-black rounded-2xl items-center justify-center p-1 mr-4 border border-gray-100 dark:border-white/5">
+                <Image
+                  source={
+                    parsedCarImage ||
+                    require("../assets/images/car-detail/car.png")
+                  }
+                  style={{ width: 150, height: 150, borderRadius: 6 }}
+                  contentFit="contain"
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="text-emerald-500 font-bold text-[10px]">
+                  {brand}
+                </Text>
+                <Text className="text-sm font-black text-yellow-500 uppercase leading-tight mt-0.5">
+                  {carName}
+                </Text>
+                <Text className="text-[10px] text-gray-400 font-medium italic mt-0.5">
+                  Expected Delivery: Within 7 Days
+                </Text>
+              </View>
+              <View className="items-end">
+                <Text className="text-sm font-black text-yellow-500">
+                  {carPrice}
+                </Text>
+              </View>
+            </View>
           </View>
         ) : (
           <View className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 p-4 shadow-sm mb-3">
@@ -275,6 +338,20 @@ export default function PaymentScreen() {
                 />
               </View>
             </>
+          ) : isVehicle ? (
+            <>
+              <BillRow label="Car Price" value={`$${mrp.toFixed(2)}`} />
+              <BillRow label="Registration" value="Free" />
+              <BillRow label="Insurance" value="Included" />
+              <BillRow label="Delivery Charges" value="Free" />
+              <View className="mt-2 pt-2 border-t border-gray-100 dark:border-white/5">
+                <BillRow
+                  label="Bill total"
+                  value={`$${billTotal.toFixed(2)}`}
+                  isTotal
+                />
+              </View>
+            </>
           ) : (
             <>
               <BillRow
@@ -288,8 +365,8 @@ export default function PaymentScreen() {
           )}
         </View>
 
-        {/* Delivery Details (Accessories only) */}
-        {isAccessories && (
+        {/* Delivery Details (Accessories & Vehicles) */}
+        {(isAccessories || isVehicle) && (
           <View className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-800 rounded-2xl p-4 mb-4">
             <View className="flex-row justify-between items-center mb-4">
               <View className="flex-row items-center">
@@ -338,44 +415,75 @@ export default function PaymentScreen() {
       {/* Success Modal */}
       <Modal
         visible={showSuccessModal}
-        transparent={!isAccessories}
+        transparent={!isAccessories && !isVehicle}
         animationType="fade"
         onRequestClose={handleCloseSuccessModal}
       >
         <View
           className={`flex-1 ${
-            isAccessories
+            isAccessories || isVehicle
               ? "bg-white dark:bg-black"
               : "bg-black/50 justify-center px-8"
           }`}
         >
           <View
             className={`${
-              isAccessories
+              isAccessories || isVehicle
                 ? "flex-1 justify-center p-8"
                 : "bg-white dark:bg-gray-900 rounded-[32px] p-8 items-center shadow-xl relative min-h-[400px] justify-center"
             }`}
           >
-            {isAccessories ? (
+            {isAccessories || isVehicle ? (
               <>
                 <View className="items-center mb-6">
                   <Text className="text-2xl font-black text-yellow-500 text-center uppercase px-4 leading-tight">
                     Order Placed Successfully
                   </Text>
+                  {isVehicle && (
+                    <View className="items-center">
+                      <Image
+                        source={
+                          parsedCarImage ||
+                          require("../assets/images/car-detail/car.png")
+                        }
+                        style={{ width: 400, height: 400 }}
+                        contentFit="contain"
+                      />
+                      <Text className="text-xl font-black dark:text-white uppercase">
+                        {brand} {carName}
+                      </Text>
+                      <Text className="text-gray-500 font-bold mt-2">
+                        Booking ID: BEOS{Math.floor(Math.random() * 100000)}
+                      </Text>
+                    </View>
+                  )}
                 </View>
 
-                <View className="flex-row items-center justify-center mt-2 px-10">
-                  <Text className="text-gray-500 font-medium italic text-base text-center">
-                    wow! You earned 20
-                  </Text>
-                  <Image
-                    source={require("../assets/images/payments/coin.png")}
-                    style={{ width: 18, height: 18, marginHorizontal: 4 }}
-                  />
-                  <Text className="text-gray-500 font-medium italic text-base text-center">
-                    Coins on this order
-                  </Text>
-                </View>
+                {!isVehicle && (
+                  <View className="flex-row items-center justify-center mt-2 px-10">
+                    <Text className="text-gray-500 font-medium italic text-base text-center">
+                      wow! You earned 20
+                    </Text>
+                    <Image
+                      source={require("../assets/images/payments/coin.png")}
+                      style={{ width: 18, height: 18, marginHorizontal: 4 }}
+                    />
+                    <Text className="text-gray-500 font-medium italic text-base text-center">
+                      Coins on this order
+                    </Text>
+                  </View>
+                )}
+
+                {isVehicle && (
+                  <View className="w-full">
+                    <ActionButton
+                      title="VIEW ORDERS"
+                      onPress={handleCloseSuccessModal}
+                      className="bg-emerald-500 rounded-full py-5 items-center justify-center"
+                      textClassName="text-white font-black text-center tracking-widest text-base"
+                    />
+                  </View>
+                )}
               </>
             ) : (
               <>
@@ -468,7 +576,9 @@ export default function PaymentScreen() {
           <TouchableOpacity
             onPress={handleCloseSuccessModal}
             className={`${
-              isAccessories ? "absolute top-4 right-6" : "mt-12 self-center"
+              isAccessories || isVehicle
+                ? "absolute top-4 right-6"
+                : "mt-12 self-center"
             } bg-gray-800 w-14 h-14 rounded-full items-center justify-center shadow-lg`}
           >
             <Ionicons name="close" size={28} color="white" />
