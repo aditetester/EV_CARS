@@ -1,11 +1,26 @@
 import { Stack } from "expo-router";
+import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import "react-native-reanimated";
 import { CartProvider } from "../context/CartContext";
 import { OrderProvider } from "../context/OrderContext";
 import "../global.css";
 
+// Prevent the splash screen from auto-hiding before asset loading is complete.
+SplashScreen.preventAutoHideAsync();
+
 export default function RootLayout() {
+  useEffect(() => {
+    // Adding a delay so you can verify the splash screen is working.
+    // You can remove this setTimeout once you've confirmed it looks correct.
+    const timer = setTimeout(() => {
+      SplashScreen.hideAsync();
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <OrderProvider>
       <CartProvider>

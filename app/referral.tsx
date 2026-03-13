@@ -2,13 +2,26 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  Linking,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function ReferralScreen() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const navigation = useNavigation<any>();
   const [activeTab, setActiveTab] = useState("Upgrade Level");
+
+  const openEmail = () => {
+    Linking.openURL(
+      "mailto:support@yourapp.com?subject=Referral Help&body=Hello, I need help with...",
+    );
+  };
 
   return (
     <View className="flex-1 bg-white dark:bg-black">
@@ -171,7 +184,7 @@ export default function ReferralScreen() {
           Level Criteria
         </Text>
         <View className="mb-6 border-2 border-gray-100 dark:border-zinc-800 p-2 rounded-xl">
-          <View className="bg-gray-100 dark:bg-zinc-900 rounded-xl p-1 flex-row mb-6">
+          <View className="bg-gray-100 dark:bg-zinc-900 rounded-xl p-1 flex-row mb-2">
             <TouchableOpacity
               onPress={() => setActiveTab("Upgrade Level")}
               style={
@@ -267,21 +280,21 @@ export default function ReferralScreen() {
             </View>
           </View>
 
-          <Text className="text-[10px] text-gray-500 mt-6 px-4 leading-4 italic">
+          <Text className="text-[10px] text-gray-500 mt-2 px-4 leading-4 italic">
             <Text className="font-bold">Note:</Text> If you fail to achieve this
             before mentioned date/days, your level will get reset automatically
           </Text>
         </View>
         {/* Level Benefits */}
-        <View className="mb-8">
-          <Text className="text-sm font-bold mb-4 text-black dark:text-white uppercase">
+        <View className="mb-4">
+          <Text className="text-sm font-bold mb-2 text-black dark:text-white uppercase">
             Level Benefits
           </Text>
 
           {/* Table Header */}
           <View className="flex-row items-end mb-2">
             <View className="flex-[1.5] py-4 bg-emerald-50 dark:bg-emerald-900/10 rounded-l-lg items-center justify-center">
-              <Text className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+              <Text className="text-md font-bold text-emerald-600 dark:text-emerald-400">
                 Benefits
               </Text>
             </View>
@@ -289,20 +302,18 @@ export default function ReferralScreen() {
               <View className="bg-yellow-400 p-2 rounded-full mb-1">
                 <Ionicons name="star" size={12} color="white" />
               </View>
-              <Text className="text-[10px] font-bold text-black dark:text-white">
+              <Text className="text-sm font-bold text-black dark:text-white">
                 Partner
               </Text>
             </View>
             <View className="flex-1 items-center bg-gray-50 dark:bg-zinc-800 rounded-t-lg pb-2 pt-1 relative">
               <View className="absolute -top-4 bg-white dark:bg-zinc-700 px-2 py-0.5 rounded-md border border-gray-100 dark:border-zinc-600 shadow-sm">
-                <Text className="text-[8px] font-bold text-gray-500">
-                  Current
-                </Text>
+                <Text className="text-xs font-bold text-gray-500">Current</Text>
               </View>
               <View className="bg-gray-300 dark:bg-zinc-600 p-2 rounded-full mb-1">
                 <Ionicons name="star" size={12} color="white" />
               </View>
-              <Text className="text-[10px] font-bold text-black dark:text-white">
+              <Text className="text-sm font-bold text-black dark:text-white">
                 Influencer
               </Text>
             </View>
@@ -310,7 +321,7 @@ export default function ReferralScreen() {
               <View className="bg-yellow-400 p-2 rounded-full mb-1">
                 <Ionicons name="star" size={12} color="white" />
               </View>
-              <Text className="text-[10px] font-bold text-black dark:text-white">
+              <Text className="text-sm font-bold text-black dark:text-white">
                 Ambassador
               </Text>
             </View>
@@ -331,42 +342,55 @@ export default function ReferralScreen() {
               key={index}
               className="flex-row border-b border-gray-50 dark:border-zinc-800"
             >
-              <View className="flex-[1.5] py-4 pr-2">
-                <Text className="text-xs text-gray-600 dark:text-gray-400 font-medium">
+              <View className="flex-[1.5] py-2 pr-2 flex-row items-center">
+                {/* Show coin image only for first row */}
+                {index === 0 && (
+                  <Image
+                    source={require("../assets/images/payments/coin.png")}
+                    className="w-4 h-4 mr-2"
+                    resizeMode="contain"
+                  />
+                )}
+
+                <Text className="text-sm text-gray-600 dark:text-gray-400 font-medium">
                   {row.label}
                 </Text>
               </View>
+
+              {/* Partner */}
               <View className="flex-1 items-center justify-center py-4">
                 {row.p === "X" ? (
-                  <View className="border border-red-400 rounded-full w-5 h-5 items-center justify-center">
-                    <Text className="text-red-400 text-[10px] font-bold">
-                      X
-                    </Text>
+                  <View className="border border-red-400 rounded-full w-6 h-6 items-center justify-center">
+                    <Text className="text-red-400 text-sm font-bold">X</Text>
                   </View>
                 ) : (
-                  <Text className="text-xs font-bold text-black dark:text-white">
+                  <Text className="text-sm font-bold text-black dark:text-white">
                     {row.p}
                   </Text>
                 )}
               </View>
+
+              {/* Influencer */}
               <View className="flex-1 items-center justify-center py-4 bg-gray-50/50 dark:bg-zinc-800/50">
                 {row.i === "check" ? (
-                  <View className="bg-emerald-100 dark:bg-emerald-900/30 rounded-full w-5 h-5 items-center justify-center border border-emerald-500">
-                    <Ionicons name="checkmark" size={12} color="#10b981" />
+                  <View className="bg-emerald-100 dark:bg-emerald-900/30 rounded-full w-6 h-6 items-center justify-center border border-emerald-500">
+                    <Ionicons name="checkmark" size={14} color="#10b981" />
                   </View>
                 ) : (
-                  <Text className="text-xs font-bold text-black dark:text-white">
+                  <Text className="text-sm font-bold text-black dark:text-white">
                     {row.i}
                   </Text>
                 )}
               </View>
+
+              {/* Ambassador */}
               <View className="flex-1 items-center justify-center py-4">
                 {row.a === "check" ? (
-                  <View className="bg-emerald-100 dark:bg-emerald-900/30 rounded-full w-5 h-5 items-center justify-center border border-emerald-500">
-                    <Ionicons name="checkmark" size={12} color="#10b981" />
+                  <View className="bg-emerald-100 dark:bg-emerald-900/30 rounded-full w-6 h-6 items-center justify-center border border-emerald-500">
+                    <Ionicons name="checkmark" size={14} color="#10b981" />
                   </View>
                 ) : (
-                  <Text className="text-xs font-bold text-black dark:text-white">
+                  <Text className="text-sm font-bold text-black dark:text-white">
                     {row.a}
                   </Text>
                 )}
@@ -386,29 +410,33 @@ export default function ReferralScreen() {
           ].map((faq, index) => (
             <TouchableOpacity
               key={index}
-              className="flex-row items-center justify-between py-4 border-b border-gray-100 dark:border-zinc-800"
+              className="flex-row items-center justify-between py-2 border-b border-gray-100 dark:border-zinc-800"
             >
-              <Text className="text-xs font-medium text-black dark:text-white">
+              <Text className="text-sm font-medium text-black dark:text-white">
                 {faq}
               </Text>
               <Ionicons
                 name="add-circle-outline"
-                size={20}
+                size={24}
                 color={isDark ? "#52525b" : "#d1d5db"}
               />
             </TouchableOpacity>
           ))}
         </View>
         {/* Footer */}
-        <TouchableOpacity className="flex-row items-center justify-center bg-white dark:bg-zinc-900 border border-emerald-100 dark:border-zinc-800 rounded-2xl p-4 mb-10 shadow-sm">
-          <View className="bg-black/80 p-2 rounded-lg mr-3">
-            <Ionicons name="help-buoy" size={20} color="white" />
+        <View className="flex-row items-center justify-center bg-white dark:bg-zinc-900 border border-emerald-100 dark:border-zinc-800 rounded-2xl p-4 mb-20 shadow-sm">
+          <View className="flex-1 flex-row items-center justify-center gap-2">
+            <View className="bg-black/80 p-2 rounded-lg">
+              <Ionicons name="help-buoy" size={20} color="white" />
+            </View>
+            <Text className="text-sm font-medium text-black dark:text-white">
+              Still have any doubts?
+            </Text>
+            <TouchableOpacity onPress={openEmail}>
+              <Text className="text-emerald-500 font-bold">Mail Us</Text>
+            </TouchableOpacity>
           </View>
-          <Text className="text-sm font-medium text-black dark:text-white">
-            Still have any doubts?{" "}
-            <Text className="text-emerald-500 font-bold">Mail Us</Text>
-          </Text>
-        </TouchableOpacity>
+        </View>
       </ScrollView>
     </View>
   );
