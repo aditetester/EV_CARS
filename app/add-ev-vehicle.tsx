@@ -1,74 +1,73 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import ActionButton from "@/components/ActionButton";
 import { Colors } from "@/constants/theme";
 import { validateRequired, validateVIN } from "@/lib/validation";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
   ScrollView,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import EVVehicleForm from "@/components/EVVehicleForm";
 
-const PLUG_TYPES = [
-  {
-    id: "css-combo-1",
-    label: "CSS COMBO TYPE 1",
-    icon: require("../assets/images/add-ev-vehicle/css-combo-type-1.png"),
-  },
-  {
-    id: "css-combo-2",
-    label: "CSS COMBO TYPE 2",
-    icon: require("../assets/images/add-ev-vehicle/css-combo-type-2.png"),
-  },
-  {
-    id: "j1772-type-1",
-    label: "J1772 TYPE 1",
-    icon: require("../assets/images/add-ev-vehicle/j1772-type-1.png"),
-  },
-  {
-    id: "gb-t",
-    label: "GB/T",
-    icon: require("../assets/images/add-ev-vehicle/GB:T.png"),
-  },
-  {
-    id: "chademo",
-    label: "CHAdeMO",
-    icon: require("../assets/images/add-ev-vehicle/chademo.png"),
-  },
-  {
-    id: "mennekes",
-    label: "MENNEKES TYPE 2",
-    icon: require("../assets/images/add-ev-vehicle/mennekes-type-2.png"),
-  },
-  {
-    id: "supercharger",
-    label: "SUPERCHARGER",
-    icon: require("../assets/images/add-ev-vehicle/supercharger.png"),
-  },
-];
+
 
 export default function AddEVVehicleScreen() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
+  const params = useLocalSearchParams();
   const [accepted, setAccepted] = useState(false);
-  const [selectedPlug, setSelectedPlug] = useState<string | null>(null);
+  const [selectedPlug, setSelectedPlug] = useState<string | null>(
+    (params.plugType as string) || null,
+  );
   const [vehicleData, setVehicleData] = useState({
-    maker: "",
-    model: "",
-    vin: "",
-    registration: "",
-    battery: "",
+    maker: (params.maker as string) || "",
+    model: (params.model as string) || "",
+    vin: (params.vin as string) || "",
+    registration: (params.registration as string) || "",
+    battery: (params.battery as string) || "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    loadCarInfo();
+  }, []);
+
+  const loadCarInfo = async () => {
+    try {
+      const storedCarInfo = await AsyncStorage.getItem("myCarInfo");
+      if (storedCarInfo) {
+        const parsedCarInfo = JSON.parse(storedCarInfo);
+
+        // Only autofill if local storage has values, and local params didn't explicitly override it.
+        // If params are passed via URL (like old implementation), they take precedence.
+        setVehicleData({
+          maker: (params.maker as string) || parsedCarInfo.maker || "",
+          model: (params.model as string) || parsedCarInfo.model || "",
+          vin: (params.vin as string) || parsedCarInfo.vin || "",
+          registration:
+            (params.registration as string) || parsedCarInfo.registration || "",
+          battery: (params.battery as string) || parsedCarInfo.battery || "",
+        });
+
+        setSelectedPlug(
+          (params.plugType as string) || parsedCarInfo.plugType || null,
+        );
+      }
+    } catch (e) {
+      console.error("Failed to load car info from storage", e);
+    }
+  };
 
   const handleAddVehicle = () => {
     const newErrors: Record<string, string> = {};
@@ -128,89 +127,14 @@ export default function AddEVVehicleScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 10 }}
       >
-        <View className="px-6 pt-2">
-          {/* Form Fields */}
-          <View className="space-y-4 mb-4" style={{ gap: 12 }}>
-            {[
-              { key: "maker", placeholder: "Car Maker" },
-              { key: "model", placeholder: "Car Model" },
-              { key: "vin", placeholder: "VIN", maxLength: 17 },
-              {
-                key: "registration",
-                placeholder: "Vehicle Registration Number",
-              },
-              { key: "battery", placeholder: "Battery Capacity" },
-            ].map((field) => (
-              <View key={field.key}>
-                <View className="bg-gray-100 dark:bg-gray-800 rounded-3xl px-6 py-2">
-                  <TextInput
-                    placeholder={field.placeholder}
-                    className="text-md font-bold text-black dark:text-white"
-                    placeholderTextColor={
-                      isDark ? Colors.dark.muted : Colors.light.muted
-                    }
-                    value={(vehicleData as any)[field.key]}
-                    onChangeText={(text) => {
-                      setVehicleData((prev) => ({
-                        ...prev,
-                        [field.key]: text,
-                      }));
-                      if (errors[field.key])
-                        setErrors((prev) => ({ ...prev, [field.key]: "" }));
-                    }}
-                    autoCapitalize={
-                      field.key === "vin" ? "characters" : "words"
-                    }
-                    maxLength={field.maxLength}
-                  />
-                </View>
-                {errors[field.key] && (
-                  <Text className="text-red-500 text-[10px] ml-6 mt-1">
-                    {errors[field.key]}
-                  </Text>
-                )}
-              </View>
-            ))}
-          </View>
-
-          {/* Plug Type Section */}
-          <Text className="text-lg font-black text-black dark:text-white uppercase mb-4 mt-2">
-            Plug In Type
-          </Text>
-          <View className="flex-row flex-wrap justify-center">
-            {PLUG_TYPES.map((plug) => (
-              <TouchableOpacity
-                key={plug.id}
-                onPress={() => setSelectedPlug(plug.id)}
-                className="items-center w-1/4 mb-2"
-              >
-                <View
-                  className={`w-14 h-14 rounded-full items-center justify-center ${
-                    selectedPlug === plug.id
-                      ? "bg-emerald-100/50 border-2 border-emerald-500"
-                      : "bg-transparent"
-                  }`}
-                >
-                  <Image
-                    source={plug.icon}
-                    style={{
-                      width: 45,
-                      height: 45,
-                      tintColor: isDark ? "white" : "black",
-                    }}
-                    contentFit="contain"
-                  />
-                </View>
-                {/* <Text
-                  className="text-[8px] font-black text-center text-black dark:text-white uppercase px-1"
-                  numberOfLines={2}
-                >
-                  {plug.label}
-                </Text> */}
-              </TouchableOpacity>
-            ))}
-          </View>
-
+        <EVVehicleForm
+          vehicleData={vehicleData}
+          setVehicleData={setVehicleData}
+          selectedPlug={selectedPlug}
+          setSelectedPlug={setSelectedPlug}
+          errors={errors}
+          setErrors={setErrors}
+        >
           {/* Your Vehicle Section */}
           <Text className="text-lg font-black text-black dark:text-white uppercase mt-2">
             Your Vehicle
@@ -259,7 +183,7 @@ export default function AddEVVehicleScreen() {
             className="py-4 rounded-2xl"
             textClassName="text-sm font-black"
           />
-        </View>
+        </EVVehicleForm>
       </ScrollView>
     </SafeAreaView>
   );

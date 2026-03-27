@@ -182,6 +182,8 @@ export default function ProfileScreen() {
               onPress={() => {
                 if (item.label === "Orders") {
                   router.push("/orders");
+                } else if (item.label === "My Car") {
+                  router.push("/my-car");
                 }
               }}
             >
