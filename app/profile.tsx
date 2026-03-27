@@ -184,6 +184,10 @@ export default function ProfileScreen() {
                   router.push("/orders");
                 } else if (item.label === "My Car") {
                   router.push("/my-car");
+                } else if (item.label === "Wallet") {
+                  router.push("/wallet");
+                } else if (item.label === "Support") {
+                  router.push("/support");
                 }
               }}
             >
