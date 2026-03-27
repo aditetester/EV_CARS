@@ -4,14 +4,35 @@ import { Colors } from "@/constants/theme";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
-import React from "react";
+import React, { useState } from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { validateEmail, validatePhone } from "@/lib/validation";
 
 export default function SignInScreen() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
+  const [identifier, setIdentifier] = useState("");
+  const [error, setError] = useState("");
+
+  const handleSignIn = () => {
+    if (!identifier) {
+      setError("Please enter your email or mobile number");
+      return;
+    }
+
+    const isValidEmail = validateEmail(identifier);
+    const isValidPhone = validatePhone(identifier);
+
+    if (!isValidEmail && !isValidPhone) {
+      setError("Please enter a valid email or 10-digit mobile number");
+      return;
+    }
+
+    setError("");
+    router.push("/otp");
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-black">
@@ -36,10 +57,21 @@ export default function SignInScreen() {
             placeholderTextColor={
               isDark ? Colors.dark.muted : Colors.light.muted
             }
+            value={identifier}
+            onChangeText={(text) => {
+              setIdentifier(text);
+              if (error) setError("");
+            }}
+            autoCapitalize="none"
           />
         </View>
+        {error && (
+          <Text className="text-red-500 text-xs text-center -mt-4 mb-4">
+            {error}
+          </Text>
+        )}
 
-        <ActionButton title="SIGN IN NOW" onPress={() => router.push("/otp")} />
+        <ActionButton title="SIGN IN NOW" onPress={handleSignIn} />
 
         <View className="flex-row items-center mt-8 mb-8">
           <View className="flex-1 h-[1px] bg-gray-300 dark:bg-gray-700" />

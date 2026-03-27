@@ -9,18 +9,54 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import ActionButton from "@/components/ActionButton";
 import SocialAuthButtons from "@/components/SocialAuthButtons";
 import { useColorScheme } from "nativewind";
+import {
+  validateEmail,
+  validateName,
+  validatePhone,
+} from "@/lib/validation";
 
 export default function SignUpScreen() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
   const router = useRouter();
   const [accepted, setAccepted] = useState(false);
+  const [name, setName] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleRegister = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!validateName(name)) {
+      newErrors.name = "Please enter a valid name (min 2 chars)";
+    }
+    if (!validatePhone(mobile)) {
+      newErrors.mobile = "Please enter a valid 10-digit mobile number";
+    }
+    if (!validateEmail(email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+    if (!accepted) {
+      Alert.alert("Required", "Please accept the terms and requirements");
+      return;
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    router.push("/otp");
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-black">
@@ -49,8 +85,19 @@ export default function SignUpScreen() {
                 placeholderTextColor={
                   isDark ? Colors.dark.muted : Colors.light.muted
                 }
+                value={name}
+                onChangeText={(text) => {
+                  setName(text);
+                  if (errors.name)
+                    setErrors((prev) => ({ ...prev, name: "" }));
+                }}
               />
             </View>
+            {errors.name && (
+              <Text className="text-red-500 text-xs ml-4 -mt-4">
+                {errors.name}
+              </Text>
+            )}
 
             <View className="flex-row items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-4 py-2">
               <Text className="mr-3 text-gray-400">
@@ -67,8 +114,20 @@ export default function SignUpScreen() {
                 placeholderTextColor={
                   isDark ? Colors.dark.muted : Colors.light.muted
                 }
+                value={mobile}
+                onChangeText={(text) => {
+                  setMobile(text);
+                  if (errors.mobile)
+                    setErrors((prev) => ({ ...prev, mobile: "" }));
+                }}
+                maxLength={10}
               />
             </View>
+            {errors.mobile && (
+              <Text className="text-red-500 text-xs ml-4 -mt-4">
+                {errors.mobile}
+              </Text>
+            )}
 
             <View className="flex-row items-center bg-gray-100 dark:bg-gray-800 rounded-xl px-4 py-2">
               <Text className="mr-3 text-gray-400">
@@ -85,13 +144,25 @@ export default function SignUpScreen() {
                 placeholderTextColor={
                   isDark ? Colors.dark.muted : Colors.light.muted
                 }
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  if (errors.email)
+                    setErrors((prev) => ({ ...prev, email: "" }));
+                }}
+                autoCapitalize="none"
               />
             </View>
+            {errors.email && (
+              <Text className="text-red-500 text-xs ml-4 -mt-4">
+                {errors.email}
+              </Text>
+            )}
           </View>
 
           <ActionButton
             title="REGISTER NOW"
-            onPress={() => router.push("/otp")}
+            onPress={handleRegister}
           />
 
           <TouchableOpacity className="mb-8 mt-8">

@@ -1,5 +1,6 @@
 import ActionButton from "@/components/ActionButton";
 import { Colors } from "@/constants/theme";
+import { validateRequired, validateVIN } from "@/lib/validation";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -7,11 +8,12 @@ import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "nativewind";
 import React, { useState } from "react";
 import {
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -59,6 +61,48 @@ export default function AddEVVehicleScreen() {
   const router = useRouter();
   const [accepted, setAccepted] = useState(false);
   const [selectedPlug, setSelectedPlug] = useState<string | null>(null);
+  const [vehicleData, setVehicleData] = useState({
+    maker: "",
+    model: "",
+    vin: "",
+    registration: "",
+    battery: "",
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleAddVehicle = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!validateRequired(vehicleData.maker))
+      newErrors.maker = "Maker is required";
+    if (!validateRequired(vehicleData.model))
+      newErrors.model = "Model is required";
+    if (!validateVIN(vehicleData.vin))
+      newErrors.vin = "VIN must be 17 characters";
+    if (!validateRequired(vehicleData.registration))
+      newErrors.registration = "Registration is required";
+    if (!validateRequired(vehicleData.battery))
+      newErrors.battery = "Battery capacity is required";
+
+    if (!selectedPlug) {
+      Alert.alert("Plug Type", "Please select a plug type");
+      return;
+    }
+
+    if (!accepted) {
+      Alert.alert("Required", "Please accept the terms and requirements");
+      return;
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    console.log("Add & Search Stations");
+    router.push("/ev-network");
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-black">
@@ -86,25 +130,45 @@ export default function AddEVVehicleScreen() {
       >
         <View className="px-6 pt-2">
           {/* Form Fields */}
-          <View className="space-y-2 mb-4" style={{ gap: 8 }}>
+          <View className="space-y-4 mb-4" style={{ gap: 12 }}>
             {[
-              "Car Maker",
-              "Car Model",
-              "VIN",
-              "Vehicle Registration Number",
-              "Battery Capacity",
-            ].map((placeholder) => (
-              <View
-                key={placeholder}
-                className="bg-gray-100 dark:bg-gray-800 rounded-3xl px-6 py-1"
-              >
-                <TextInput
-                  placeholder={placeholder}
-                  className="text-md font-bold text-black dark:text-white"
-                  placeholderTextColor={
-                    isDark ? Colors.dark.muted : Colors.light.muted
-                  }
-                />
+              { key: "maker", placeholder: "Car Maker" },
+              { key: "model", placeholder: "Car Model" },
+              { key: "vin", placeholder: "VIN", maxLength: 17 },
+              {
+                key: "registration",
+                placeholder: "Vehicle Registration Number",
+              },
+              { key: "battery", placeholder: "Battery Capacity" },
+            ].map((field) => (
+              <View key={field.key}>
+                <View className="bg-gray-100 dark:bg-gray-800 rounded-3xl px-6 py-2">
+                  <TextInput
+                    placeholder={field.placeholder}
+                    className="text-md font-bold text-black dark:text-white"
+                    placeholderTextColor={
+                      isDark ? Colors.dark.muted : Colors.light.muted
+                    }
+                    value={(vehicleData as any)[field.key]}
+                    onChangeText={(text) => {
+                      setVehicleData((prev) => ({
+                        ...prev,
+                        [field.key]: text,
+                      }));
+                      if (errors[field.key])
+                        setErrors((prev) => ({ ...prev, [field.key]: "" }));
+                    }}
+                    autoCapitalize={
+                      field.key === "vin" ? "characters" : "words"
+                    }
+                    maxLength={field.maxLength}
+                  />
+                </View>
+                {errors[field.key] && (
+                  <Text className="text-red-500 text-[10px] ml-6 mt-1">
+                    {errors[field.key]}
+                  </Text>
+                )}
               </View>
             ))}
           </View>
@@ -123,7 +187,7 @@ export default function AddEVVehicleScreen() {
                 <View
                   className={`w-14 h-14 rounded-full items-center justify-center ${
                     selectedPlug === plug.id
-                      ? "bg-emerald-100 border-2 border-emerald-500"
+                      ? "bg-emerald-100/50 border-2 border-emerald-500"
                       : "bg-transparent"
                   }`}
                 >
@@ -191,10 +255,7 @@ export default function AddEVVehicleScreen() {
           {/* Submit Button */}
           <ActionButton
             title="ADD & SEARCH STATIONS"
-            onPress={() => {
-              console.log("Add & Search Stations");
-              router.push("/ev-network");
-            }}
+            onPress={handleAddVehicle}
             className="py-4 rounded-2xl"
             textClassName="text-sm font-black"
           />

@@ -4,8 +4,9 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import { useColorScheme } from "nativewind";
 import React, { useRef, useState } from "react";
-import { Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { validateOTP } from "@/lib/validation";
 
 export default function OTPScreen() {
   const { colorScheme } = useColorScheme();
@@ -28,6 +29,14 @@ export default function OTPScreen() {
   const handleKeyPress = (e: any, index: number) => {
     if (e.nativeEvent.key === "Backspace" && otp[index] === "" && index > 0) {
       inputs.current[index - 1]?.focus();
+    }
+  };
+
+  const verifyOtp = () => {
+    if (validateOTP(otp)) {
+      router.push("/dashboard");
+    } else {
+      Alert.alert("Invalid OTP", "Please enter the complete 4-digit code");
     }
   };
 
@@ -83,7 +92,7 @@ export default function OTPScreen() {
 
         <ActionButton
           title="Verify"
-          onPress={() => router.push("/dashboard")}
+          onPress={verifyOtp}
         />
       </View>
     </SafeAreaView>

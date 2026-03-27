@@ -3,16 +3,21 @@ import BrandItem from "@/components/BrandItem";
 import ExploreItem from "@/components/ExploreItem";
 import ProfileButton from "@/components/ProfileButton";
 import SearchBar from "@/components/SearchBar";
+import { useTheme } from "@/hooks/useTheme";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
-// import { useColorScheme } from "nativewind";
-import { useTheme } from "@/hooks/useTheme";
 import React from "react";
 import { ScrollView, Text, View } from "react-native";
 
 export default function CarTypeScreen() {
   const theme = useTheme();
   const router = useRouter();
+
+  const handleCarTypePress = (carType: string) => {
+    router.push({ pathname: "/carsearch", params: { carType } });
+    console.log(carType);
+  };
+
   return (
     <View className="flex-1 bg-white dark:bg-black">
       <ScrollView
@@ -36,25 +41,25 @@ export default function CarTypeScreen() {
             title="Sedan"
             icon={require("../assets/images/car-type/car.png")}
             color={theme.yellow}
-            onPress={() => console.log("Sedan")}
+            onPress={() => handleCarTypePress("Sedan")}
           />
           <ExploreItem
             title="Hatchback"
             icon={require("../assets/images/car-type/car.png")}
             color={theme.emerald}
-            onPress={() => console.log("Hatchback")}
+            onPress={() => handleCarTypePress("Hatchback")}
           />
           <ExploreItem
             title="SUV"
             icon={require("../assets/images/car-type/car.png")}
             color={theme.emerald}
-            onPress={() => console.log("SUV")}
+            onPress={() => handleCarTypePress("SUV")}
           />
           <ExploreItem
             title="MUV"
             icon={require("../assets/images/car-type/car.png")}
             color={theme.emerald}
-            onPress={() => console.log("MUV")}
+            onPress={() => handleCarTypePress("MUV")}
           />
         </View>
 

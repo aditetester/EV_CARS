@@ -20,18 +20,12 @@ interface BottomTabsProps {
 const defaultTabs: TabItem[] = [
   {
     name: "home-outline",
-    onPress: () => {
-      // Use navigation.reset to clear the stack and make dashboard the root
-      // This prevents the back button from returning to the previous screen
-    },
   },
   {
     name: "flash-outline",
-    onPress: () => console.log("Flash"),
   },
   {
     name: "notifications-outline",
-    onPress: () => console.log("Notifications"),
   },
 ];
 
@@ -75,8 +69,10 @@ const BottomTabs: React.FC<BottomTabsProps> = ({ tabs = defaultTabs }) => {
                   index: 0,
                   routes: [{ name: "dashboard" }],
                 });
-              } else if (tab.onPress) {
-                tab.onPress();
+              } else if (index === 1) {
+                navigation.push("add-ev-vehicle");
+              } else if (index === 2) {
+                navigation.push("notification-preferences");
               }
             }}
             style={{

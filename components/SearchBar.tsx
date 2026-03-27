@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/hooks/useTheme";
 import React from "react";
 import { TextInput, TouchableOpacity, View } from "react-native";
@@ -8,6 +9,7 @@ interface SearchBarProps {
   autoFocus?: boolean;
   value?: string;
   onChangeText?: (text: string) => void;
+  onSubmitEditing?: () => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -16,6 +18,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   autoFocus,
   value,
   onChangeText,
+  onSubmitEditing,
 }) => {
   const theme = useTheme();
   const inputElement = (
@@ -29,6 +32,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
       onChangeText={onChangeText}
       onFocus={() => onFocusChange?.(true)}
       onBlur={() => onFocusChange?.(false)}
+      onSubmitEditing={onSubmitEditing}
+      returnKeyType="search"
       textAlignVertical="center"
       style={{ paddingVertical: 0 }}
     />
@@ -47,8 +52,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
   }
 
   return (
-    <View className="border-2 border-gray-200 dark:border-white/20 rounded-2xl flex-1 px-3 py-2 bg-surface dark:bg-surfaceDark">
+    <View className="border-2 border-gray-200 dark:border-white/20 rounded-2xl flex-1 px-3 py-2 bg-surface dark:bg-surfaceDark flex-row items-center">
       {inputElement}
+      {value && value.length > 0 && (
+        <TouchableOpacity onPress={() => onChangeText?.("")}>
+          <Ionicons name="close-circle" size={20} color={theme.muted} />
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
